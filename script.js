@@ -19,7 +19,7 @@ let espSelecionada = 0.32; // padrão
 
 espessuras.forEach(e => {
     let btn = document.createElement("button");
-    btn.innerText = e + " mm";
+   btn.innerHTML = `<img src="https://img.icons8.com/dotty/80/line-width.png" style="width:18px;height:18px;margin-right:5px;"> ${e} mm`;
 
     btn.onclick = function() {
         // remove seleção de todos
@@ -42,7 +42,7 @@ let velSelecionada = 10; // padrão
 
 velocidades.forEach(v => {
     let btn = document.createElement("button");
-    btn.innerText = v + " m/min";
+    btn.innerHTML = `<img src="https://img.icons8.com/color/48/speed.png" style="width:18px;height:18px;margin-right:5px;"> ${v} m/min`;
 
     btn.onclick = function() {
         // remove seleção de todos
