@@ -1,0 +1,95 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1e1e2f, #2c2c3f);
+    color: white;
+    padding: 20px;
+    max-width: 500px;
+    margin: auto;
+}
+
+h2 {
+    text-align: center;
+    color: #00e0ff;
+    font-size: 20px;
+}
+
+label {
+    font-weight: bold;
+    color: #ddd;
+    font-size: 16px;
+
+}
+
+select, button {
+    margin: 5px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: none;
+    font-size: 14px;
+}
+
+select {
+    background: #111;
+    color: white;
+     width: 100%;
+    font-size: 16px;
+}
+
+button {
+    background: #0077ff;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+    width:100%;
+    margin-top: 5px;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #00b3ff;
+    transform: scale(1.05);
+}
+
+#espessuras button {
+    background: #ff9800;
+}
+
+#velocidades button {
+    background: #4caf50;
+}
+
+#resultado {
+    margin-top: 20px;
+    padding: 15px;
+    background: #111;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00e0ff;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#metros {
+    font-size: 28px;
+    color: #00ff9c;
+}
+
+#tempo {
+    font-size: 24px;
+    color: #ffd54f;
+}
+
+#hora {
+    font-size: 22px;
+    color: #ff6b6b;
+}
+
+#passos {
+    font-size: 14px;
+    color: #ccc;
+}
+
+.selecionado {
+    background: #00e0ff !important;
+    color: black !important;
+    transform: scale(1.1);
+}
