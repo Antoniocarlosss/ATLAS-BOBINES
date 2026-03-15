@@ -1,120 +1,132 @@
-// =========================
-// Preencher seleção de largura (1 a 50 cm de 0.5 em 0.5)
-const selectLargura = document.getElementById("largura");
-for(let i = 1; i <= 40; i += 0.5){
-    let option = document.createElement("option");
-    option.value = i;
+document.addEventListener("DOMContentLoaded", ()=>{
 
-    // mostrar inteiro sem decimal, .5 com decimal
-    option.text = (i % 1 === 0) ? i + " cm" : i.toFixed(1) + " cm";
+const welcome = document.getElementById("welcomeScreen")
+const mainPanel = document.getElementById("mainPanel")
+const nomeInput = document.getElementById("nomeUsuarioInput")
+const idiomaSelect = document.getElementById("idiomaSelect")
+const entrar = document.getElementById("entrarBtn")
+const resetBtn = document.getElementById("resetUser")
 
-    selectLargura.appendChild(option);
+let nome = localStorage.getItem("nomeUsuario")
+let idioma = localStorage.getItem("idiomaUsuario") || "pt"
+
+const textos = {
+    pt:{titulo:"Calculadora de Bobina",largura:"Largura da bobina externa (cm)",espessura:"Espessura da chapa (mm)",velocidade:"Velocidade da máquina (m/min)",falta:"Falta para acabar: ",tempo:"Falta ",acaba:"Provavelmente acaba às: ",trocar:"Trocar usuário",primeiro:"Primeiro acesso"},
+    en:{titulo:"Coil Calculator",largura:"Width",espessura:"Thickness",velocidade:"Speed",falta:"Remaining: ",tempo:"Remaining ",acaba:"Finish at: ",trocar:"Change user",primeiro:"First access"},
+    hi:{titulo:"कॉइल कैलकुलेटर",largura:"चौड़ाई",espessura:"मोटाई",velocidade:"गति",falta:"बाकी: ",tempo:"बाकी ",acaba:"समाप्त: ",trocar:"यूज़र बदलें",primeiro:"पहली बार"}
 }
 
-// =========================
-// Criar botões de espessura
-const espDiv = document.getElementById("espessuras");
-const espessuras = [0.28,0.32,0.35,0.38,0.40,0.45,0.50,0.60,0.68];
-let espSelecionada = 0.32; // padrão
-
-espessuras.forEach(e => {
-    let btn = document.createElement("button");
-   btn.innerHTML = `<img src="https://img.icons8.com/dotty/80/line-width.png" style="width:18px;height:18px;margin-right:5px;"> ${e} mm`;
-
-    btn.onclick = function() {
-        // remove seleção de todos
-        espDiv.querySelectorAll("button").forEach(b => b.classList.remove("selecionado"));
-        // adiciona seleção neste botão
-        btn.classList.add("selecionado");
-
-        espSelecionada = e;
-        calcular();
-    };
-
-    espDiv.appendChild(btn);
-});
-
-// =========================
-// Criar botões de velocidade
-const velDiv = document.getElementById("velocidades");
-const velocidades = [5,6,7,8,9,10,11,12];
-let velSelecionada = 10; // padrão
-
-velocidades.forEach(v => {
-    let btn = document.createElement("button");
-    btn.innerHTML = `<img src="https://img.icons8.com/color/48/speed.png" style="width:18px;height:18px;margin-right:5px;"> ${v} m/min`;
-
-    btn.onclick = function() {
-        // remove seleção de todos
-        velDiv.querySelectorAll("button").forEach(b => b.classList.remove("selecionado"));
-        // adiciona seleção neste botão
-        btn.classList.add("selecionado");
-
-        velSelecionada = v;
-        calcular();
-    };
-
-    velDiv.appendChild(btn);
-});
-
-// =========================
-// Função de cálculo
-function calcular() {
-    const interno = 500; // mm
-    const pi = 3.14;
-
-    const largura_cm = parseFloat(selectLargura.value);
-    const espessura = parseFloat(espSelecionada);
-    const velocidade = parseFloat(velSelecionada);
-
-    if(isNaN(largura_cm) || isNaN(espessura) || largura_cm <=0 || espessura <=0){
-        alert("Valores inválidos!");
-        return;
-    }
-
-    const largura_mm = largura_cm * 10; // cm → mm
-
-    // Passo 1
-    const passo1 = largura_mm / espessura;
-
-    // Passo 2
-    const passo2 = passo1 * pi;
-
-    // Passo 3
-    const soma_interno_largura = interno + largura_mm;
-
-    // Passo 4
-    const metros_mm = passo2 * soma_interno_largura; // ainda em mm
-    const metros = Math.round(metros_mm / 1000); // converter para metros
-
-    // Tempo
-    const tempo_total_min = Math.round(metros / velocidade); // minutos
-    const horas = Math.floor(tempo_total_min / 60);
-    const minutos = tempo_total_min % 60;
-
-    // Hora final
-    const agora = new Date();
-    agora.setMinutes(agora.getMinutes() + tempo_total_min);
-
-    // Mostrar resultados
-    document.getElementById("passos").innerHTML = `
-Passo 1: ${largura_mm} / ${espessura} = ${passo1.toFixed(2)}<br>
-Passo 2: ${passo1.toFixed(2)} × ${pi} = ${passo2.toFixed(2)}<br>
-Passo 3: ${interno} + ${largura_mm} = ${soma_interno_largura}<br>
-Passo 4: ${passo2.toFixed(2)} × ${soma_interno_largura} = ${metros} metros
-`;
-
-    document.getElementById("metros").innerText = "Metros de bobina: " + metros;
-
-    if(horas > 0){
-        document.getElementById("tempo").innerText = `Tempo para acabar: ${horas} h e ${minutos} min`;
-    } else {
-        document.getElementById("tempo").innerText = `Tempo para acabar: ${minutos} min`;
-    }
-
-    document.getElementById("hora").innerText = "Vai acabar por volta das: " + agora.toLocaleTimeString();
+function showMain(){
+    welcome.style.display="none"
+    mainPanel.style.display="block"
+    start()
 }
 
-// =========================
-// Opcional: chamar calcular no início para mostrar resultado padrão
-calcular();
+if(nome){
+    showMain()
+}else{
+    entrar.onclick = ()=>{
+        nome = nomeInput.value
+        idioma = idiomaSelect.value
+        localStorage.setItem("nomeUsuario", nome)
+        localStorage.setItem("idiomaUsuario", idioma)
+        showMain()
+    }
+}
+
+// botão trocar usuário
+resetBtn.onclick = ()=>{
+    localStorage.removeItem("nomeUsuario")
+    localStorage.removeItem("idiomaUsuario")
+    localStorage.removeItem("ultimo")
+    location.reload()
+}
+
+function start(){
+    const t = textos[idioma]
+    document.getElementById("tituloPrograma").innerText = t.titulo
+    document.getElementById("labelLargura").innerText = t.largura
+    document.getElementById("labelEspessura").innerText = t.espessura
+    document.getElementById("labelVelocidade").innerText = t.velocidade
+    resetBtn.innerText = t.trocar
+
+    // saudação
+    const saudacao = document.getElementById("saudacao")
+    function atualizarSaudacao(){
+        const agora = new Date()
+        let h = agora.getHours()
+        let s="Boa noite"
+        if(h<12)s="Bom dia"
+        else if(h<18)s="Boa tarde"
+        const ultimo = localStorage.getItem("ultimo") || t.primeiro
+        saudacao.innerHTML = s+", "+nome+"<br>Último acesso: "+ultimo+"<br>"+agora.toLocaleTimeString()
+    }
+    setInterval(atualizarSaudacao,1000)
+    atualizarSaudacao()
+    window.addEventListener("beforeunload", ()=>{
+        localStorage.setItem("ultimo", new Date().toLocaleString())
+    })
+
+    // largura
+    const largura = document.getElementById("largura")
+    for(let i=1;i<=40;i+=0.5){
+        let o=document.createElement("option")
+        o.value=i
+        o.text=(i%1===0)? i+" cm":i.toFixed(1)+" cm"
+        largura.appendChild(o)
+    }
+
+    // espessura
+    const espDiv=document.getElementById("espessuras")
+    const esp=[0.28,0.32,0.35,0.38,0.40,0.45]
+    let espSel=0.32
+    esp.forEach(e=>{
+        let b=document.createElement("button")
+        b.innerHTML=`<img src="https://img.icons8.com/dotty/80/line-width.png" style="width:18px;height:18px;margin-right:5px;"> ${e} mm`
+        b.onclick=()=>{
+            espDiv.querySelectorAll("button").forEach(x=>x.classList.remove("selecionado"))
+            b.classList.add("selecionado")
+            espSel=e
+            calc()
+        }
+        espDiv.appendChild(b)
+    })
+
+    // velocidade
+    const velDiv=document.getElementById("velocidades")
+    const vel=[5,6,7,8,9,10,11,12]
+    let velSel=10
+    vel.forEach(v=>{
+        let b=document.createElement("button")
+        b.innerHTML=`<img src="https://img.icons8.com/color/48/speed.png" style="width:18px;height:18px;margin-right:5px;"> ${v} m/min`
+        b.onclick=()=>{
+            velDiv.querySelectorAll("button").forEach(x=>x.classList.remove("selecionado"))
+            b.classList.add("selecionado")
+            velSel=v
+            calc()
+        }
+        velDiv.appendChild(b)
+    })
+
+    function calc(){
+        const interno=500
+        const pi=3.14
+        const largura_cm=parseFloat(largura.value)
+        const largura_mm=largura_cm*10
+        const p1=largura_mm/espSel
+        const p2=p1*pi
+        const soma=interno+largura_mm
+        const metros=Math.round((p2*soma)/1000)
+        const tempoTotalMin=Math.round(metros/velSel)
+        const fim=new Date()
+        fim.setMinutes(fim.getMinutes()+tempoTotalMin)
+        const horas=Math.floor(tempoTotalMin/60)
+        const minutos=tempoTotalMin%60
+        let textoTempo = (horas>0)? horas+" hr e "+minutos+" min" : minutos+" minutos"
+        document.getElementById("metros").innerText = t.falta + metros + " metros"
+        document.getElementById("tempo").innerText = t.tempo + textoTempo
+        document.getElementById("hora").innerText = t.acaba + fim.toLocaleTimeString()
+    }
+    calc()
+}
+})
