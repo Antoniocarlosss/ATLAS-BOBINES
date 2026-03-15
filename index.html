@@ -3,24 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Bobina Atlas painel</title>
+<title>Calculadora de Bobina Atlas</title>
 <link rel="stylesheet" href="style.css">
-<!-- Ícone do site -->
-    <link rel="icon" type="image/png" sizes="192x192" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
 </head>
 <body>
 
-<h2>Calculadora de Bobina Atlas Painel</h2>
+<!-- TELA DE PRIMEIRO ACESSO -->
+<div id="welcomeScreen" class="welcomeScreen">
+    <h2>Bem-vindo! Primeiro acesso</h2>
+    <label>Digite seu nome:</label><br>
+    <input type="text" id="nomeUsuarioInput" placeholder="Seu nome"><br><br>
+    <label>Escolha o idioma:</label><br>
+    <select id="idiomaSelect">
+        <option value="pt">Português</option>
+        <option value="en">English</option>
+        <option value="hi">Hindi</option>
+    </select><br><br>
+    <button id="entrarBtn">Entrar</button>
+</div>
 
-<label>Largura da bobina externa (cm)</label><br>
+<!-- PAINEL PRINCIPAL -->
+<div id="mainPanel" class="mainPanel" style="display:none;">
+
+<h2 id="tituloPrograma">Calculadora de Bobina</h2>
+
+<div id="saudacao" class="saudacao"></div>
+
+<label id="labelLargura">Largura da bobina externa (cm)</label><br>
 <select id="largura"></select><br><br>
 
-<label>Espessura da chapa (mm)</label><br>
-<div id="espessuras"></div><br>
+<label id="labelEspessura">Espessura da chapa (mm)</label><br>
+<div id="espessuras" class="btnGroup"></div><br>
 
-<label>Velocidade da máquina (m/min)</label><br>
-<div id="velocidades"></div><br>
+<label id="labelVelocidade">Velocidade da máquina (m/min)</label><br>
+<div id="velocidades" class="btnGroup"></div><br>
 
 <div id="resultado">
     <h3 id="passos"></h3>
@@ -29,6 +45,10 @@
     <h3 id="hora"></h3>
 </div>
 
+<!-- Botão de trocar usuário no final -->
+<button id="resetUser">Trocar usuário</button>
+
 <script src="script.js"></script>
+</div>
 </body>
 </html>
