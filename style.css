@@ -10,29 +10,28 @@ body {
 h2 {
     text-align: center;
     color: #00e0ff;
-    font-size: 20px;
+    font-size: 22px;
 }
 
 label {
     font-weight: bold;
     color: #ddd;
     font-size: 16px;
-
 }
 
-select, button {
-    margin: 5px;
+input, select, button {
+    margin: 5px 0;
     padding: 8px 10px;
     border-radius: 6px;
     border: none;
-    font-size: 14px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 select {
     background: #111;
     color: white;
-     width: 100%;
-    font-size: 16px;
 }
 
 button {
@@ -40,14 +39,26 @@ button {
     color: white;
     cursor: pointer;
     transition: 0.2s;
-    width:100%;
-    margin-top: 5px;
-    font-size: 16px;
 }
 
 button:hover {
     background: #00b3ff;
     transform: scale(1.05);
+}
+
+.btnGroup button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 5px;
+    background: #333;
+    color: white;
+    width: 100%;
+    font-size: 16px;
+}
+
+.btnGroup button img {
+    margin-right: 8px;
 }
 
 #espessuras button {
@@ -58,14 +69,18 @@ button:hover {
     background: #4caf50;
 }
 
+.selecionado {
+    background: #00e0ff !important;
+    color: black !important;
+    transform: scale(1.1);
+}
+
 #resultado {
     margin-top: 20px;
     padding: 15px;
     background: #111;
     border-radius: 10px;
-    box-shadow: 0 0 10px #00e0ff;
-    width: 100%;
-    box-sizing: border-box;
+    box-shadow: 0 0 15px #00e0ff;
 }
 
 #metros {
@@ -88,8 +103,17 @@ button:hover {
     color: #ccc;
 }
 
-.selecionado {
-    background: #00e0ff !important;
-    color: black !important;
-    transform: scale(1.1);
+#resetUser {
+    margin-top: 20px;
+    background: #ff4444;
+}
+
+.welcomeScreen {
+    text-align: center;
+    padding: 20px;
+}
+
+.saudacao {
+    margin-bottom: 10px;
+    font-size: 16px;
 }
