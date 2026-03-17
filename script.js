@@ -69,7 +69,7 @@ function start(){
 
     // largura
     const largura = document.getElementById("largura")
-    for(let i=1;i<=40;i+=0.5){
+    for(let i=1;i<=50;i+=0.5){
         let o=document.createElement("option")
         o.value=i
         o.text=(i%1===0)? i+" cm":i.toFixed(1)+" cm"
@@ -78,7 +78,7 @@ function start(){
 
     // espessura
     const espDiv=document.getElementById("espessuras")
-    const esp=[0.28,0.32,0.35,0.38,0.40,0.45]
+    const esp=[0.28,0.30,0.32,0.35,0.38,0.40,0.45]
     let espSel=0.32
     esp.forEach(e=>{
         let b=document.createElement("button")
