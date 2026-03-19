@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -8,10 +8,20 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.png">
 <meta name="theme-color" content="#0077ff">
+
+<!-- GOOGLE ANALYTICS -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J6VCHDN4X2"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-J6VCHDN4X2');
+</script>
+
 </head>
 <body>
 
-<!-- TELA DE PRIMEIRO ACESSO -->
 <div id="welcomeScreen" class="welcomeScreen">
     <h2>Bem-vindo! Primeiro acesso</h2>
     <label>Digite seu nome:</label><br>
@@ -25,7 +35,6 @@
     <button id="entrarBtn">Entrar</button>
 </div>
 
-<!-- PAINEL PRINCIPAL -->
 <div id="mainPanel" class="mainPanel" style="display:none;">
 
 <h2 id="tituloPrograma">Calculadora de Bobina</h2>
@@ -48,7 +57,6 @@
     <h3 id="hora"></h3>
 </div>
 
-<!-- Botão de trocar usuário no final -->
 <button id="resetUser">Trocar usuário</button>
 
 <script src="script.js"></script>
