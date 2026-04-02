@@ -108,25 +108,55 @@ function start(){
         velDiv.appendChild(b)
     })
 
-    function calc(){
-        const interno=500
-        const pi=3.14
-        const largura_cm=parseFloat(largura.value)
-        const largura_mm=largura_cm*10
-        const p1=largura_mm/espSel
-        const p2=p1*pi
-        const soma=interno+largura_mm
-        const metros=Math.round((p2*soma)/1000)
-        const tempoTotalMin=Math.round(metros/velSel)
-        const fim=new Date()
-        fim.setMinutes(fim.getMinutes()+tempoTotalMin)
-        const horas=Math.floor(tempoTotalMin/60)
-        const minutos=tempoTotalMin%60
-        let textoTempo = (horas>0)? horas+" hr e "+minutos+" min" : minutos+" minutos"
-        document.getElementById("metros").innerText = t.falta + metros + " metros"
-        document.getElementById("tempo").innerText = t.tempo + textoTempo
-        document.getElementById("hora").innerText = t.acaba + fim.toLocaleTimeString()
+    function calc() {
+    const largura_mm = parseFloat(largura.value) * 10;
+    const metros = Math.round(((largura_mm / espSel) * 3.14 * (500 + largura_mm)) / 1000);
+    const tempoTotalMin = Math.round(metros / velSel);
+    
+    const fim = new Date();
+    fim.setMinutes(fim.getMinutes() + tempoTotalMin);
+
+    document.getElementById("metros").innerText = t.falta + metros + " m";
+    document.getElementById("tempo").innerText = t.tempo + tempoTotalMin + " min";
+    document.getElementById("hora").innerText = t.acaba + fim.toLocaleTimeString();
+
+    const resDiv = document.getElementById("resultado");
+    const alarmeAtivo = document.getElementById("ativarAlarme").checked; // Verifica se o usuário quer o alarme
+
+    // Limpa as cores de alerta se o alarme for desativado
+    resDiv.classList.remove("alerta-aviso", "alerta-critico");
+
+    // SÓ EXECUTA A LÓGICA SE O USUÁRIO MARCOU A OPÇÃO
+    if (alarmeAtivo) {
+        if (tempoTotalMin <= 5 && tempoTotalMin > 0) {
+            resDiv.classList.add("alerta-critico");
+            if (!alerta5Enviado) {
+                enviarNotificacao("URGENTE", "A bobina acaba em 5 minutos!");
+                dispararBeep(800, 0.5);
+                alerta5Enviado = true;
+            }
+        } 
+        else if (tempoTotalMin <= 10 && tempoTotalMin > 5) {
+            resDiv.classList.add("alerta-aviso");
+            if (!alerta10Enviado) {
+                enviarNotificacao("AVISO", "A bobina acaba em 10 minutos.");
+                dispararBeep(440, 0.3);
+                alerta10Enviado = true;
+            }
+        }
     }
-    calc()
+
+    // Se o tempo subir (troca de bobina), resetamos os avisos para a próxima
+    if (tempoTotalMin > 10) {
+        alerta10Enviado = false;
+        alerta5Enviado = false;
+    }
 }
-})
+
+// Adicione este listener para o cálculo atualizar assim que o usuário marcar/desmarcar a caixa
+document.getElementById("ativarAlarme").onchange = calc;
+largura.onchange = calc;
+    setInterval(calc, 30000);
+    calc();
+    }
+    });
