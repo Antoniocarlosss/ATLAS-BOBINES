@@ -1,53 +1,38 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Multi-Bobinas Atlas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Atlas - Controle de Produção</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="welcomeScreen" class="welcomeScreen">
-    <h2>Atlas - Controle de Produção</h2>
-    <input type="text" id="nomeUsuarioInput" placeholder="Seu nome"><br><br>
-    <select id="idiomaSelect">
-        <option value="pt">Português</option>
-        <option value="en">English</option>
-    </select><br><br>
-    <button id="entrarBtn">Entrar</button>
-</div>
+<div id="mainPanel" class="mainPanel">
+    <button id="btnParadaGeral" class="emergency-btn">🛑 PARAR MÁQUINA</button>
 
-<div id="mainPanel" class="mainPanel" style="display:none;">
-    <h2 id="tituloPrograma">Calculadora de Bobinas</h2>
-    <div id="saudacao" class="saudacao" style="text-align: center; margin-bottom: 20px;"></div>
-
-    <div class="config-box" style="background: #222; padding: 15px; border-radius: 10px; border: 1px solid #444;">
-        <label>Selecione a Bobina:</label>
-        <select id="selecaoBobina" style="background: #0077ff; font-weight: bold;">
-            <option value="1">Bobina 1 (Ativa)</option>
-            <option value="2">Bobina 2 (Ativa)</option>
-            <option value="3">Bobina 3 (Ativa)</option>
-            <option value="4">Bobina 4 (Ativa)</option>
-            <option value="reserva">Bobina Reserva (Congelada)</option>
+    <div class="config-box">
+        <label>Nova Bobina:</label>
+        <select id="selecaoBobina">
+            <option value="1">Bobina 1</option>
+            <option value="2">Bobina 2</option>
+            <option value="3">Bobina 3</option>
+            <option value="4">Bobina 4</option>
         </select>
 
-        <label>Largura externa (cm)</label>
+        <label>Largura (cm):</label>
         <select id="largura"></select>
 
-        <label>Espessura (mm)</label>
+        <label>Espessura (mm):</label>
         <div id="espessuras" class="btnGroup"></div>
 
-        <label>Velocidade (m/min)</label>
+        <label>Velocidade (m/min):</label>
         <div id="velocidades" class="btnGroup"></div>
 
-        <button id="confirmarBtn" style="background: #28a745; font-weight: bold; margin-top: 15px;">CALCULAR / INICIAR</button>
+        <button id="confirmarBtn">ADICIONAR À LINHA</button>
     </div>
 
-    <div id="containerBobinas" style="margin-top: 20px; display: grid; gap: 15px;">
-        </div>
-
-    <button id="resetUser" style="margin-top: 30px; background: #444; font-size: 12px;">Trocar usuário</button>
+    <div id="containerBobinas" class="grid-bobinas"></div>
 </div>
 
 <script src="script.js"></script>
