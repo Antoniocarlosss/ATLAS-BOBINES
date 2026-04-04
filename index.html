@@ -1,70 +1,55 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Bobina Atlas</title>
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon.png">
-<meta name="theme-color" content="#0077ff">
-
-<!-- GOOGLE ANALYTICS -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-J6VCHDN4X2"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-
-gtag('config', 'G-J6VCHDN4X2');
-</script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Multi-Bobinas Atlas</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div id="welcomeScreen" class="welcomeScreen">
-    <h2>Bem-vindo! Primeiro acesso</h2>
-    <label>Digite seu nome:</label><br>
+    <h2>Atlas - Controle de Produção</h2>
     <input type="text" id="nomeUsuarioInput" placeholder="Seu nome"><br><br>
-    <label>Escolha o idioma:</label><br>
     <select id="idiomaSelect">
         <option value="pt">Português</option>
         <option value="en">English</option>
-        <option value="hi">Hindi</option>
     </select><br><br>
     <button id="entrarBtn">Entrar</button>
 </div>
 
 <div id="mainPanel" class="mainPanel" style="display:none;">
+    <h2 id="tituloPrograma">Calculadora de Bobinas</h2>
+    <div id="saudacao" class="saudacao" style="text-align: center; margin-bottom: 20px;"></div>
 
-<h2 id="tituloPrograma">Calculadora de Bobina</h2>
+    <div class="config-box" style="background: #222; padding: 15px; border-radius: 10px; border: 1px solid #444;">
+        <label>Selecione a Bobina:</label>
+        <select id="selecaoBobina" style="background: #0077ff; font-weight: bold;">
+            <option value="1">Bobina 1 (Ativa)</option>
+            <option value="2">Bobina 2 (Ativa)</option>
+            <option value="3">Bobina 3 (Ativa)</option>
+            <option value="4">Bobina 4 (Ativa)</option>
+            <option value="reserva">Bobina Reserva (Congelada)</option>
+        </select>
 
-<div id="saudacao" class="saudacao"></div>
+        <label>Largura externa (cm)</label>
+        <select id="largura"></select>
 
-<label id="labelLargura">Largura da bobina externa (cm)</label><br>
-<select id="largura"></select><br><br>
+        <label>Espessura (mm)</label>
+        <div id="espessuras" class="btnGroup"></div>
 
-<label id="labelEspessura">Espessura da chapa (mm)</label><br>
-<div id="espessuras" class="btnGroup"></div><br>
+        <label>Velocidade (m/min)</label>
+        <div id="velocidades" class="btnGroup"></div>
 
-<label id="labelVelocidade">Velocidade da máquina (m/min)</label><br>
-<div id="velocidades" class="btnGroup"></div><br>
+        <button id="confirmarBtn" style="background: #28a745; font-weight: bold; margin-top: 15px;">CALCULAR / INICIAR</button>
+    </div>
 
-<div style="margin: 15px 0; background: #222; padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
-    <input type="checkbox" id="ativarAlarme" style="width: 25px; height: 25px; margin: 0; cursor: pointer;">
-    <label for="ativarAlarme" style="color: #00e0ff; cursor: pointer;">Me avisar quando estiver acabando (10 e 5 min)</label>
+    <div id="containerBobinas" style="margin-top: 20px; display: grid; gap: 15px;">
+        </div>
+
+    <button id="resetUser" style="margin-top: 30px; background: #444; font-size: 12px;">Trocar usuário</button>
 </div>
-
-<div id="resultado">
-    <h3 id="passos"></h3>
-    <h3 id="metros"></h3>
-    <h3 id="tempo"></h3>
-    <h3 id="hora"></h3>
-</div>
-
-<button id="resetUser">Trocar usuário</button>
 
 <script src="script.js"></script>
-</div>
 </body>
 </html>
