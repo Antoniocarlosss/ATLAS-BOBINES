@@ -1,139 +1,138 @@
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #1e1e2f, #2c2c3f);
-    color: white;
-    padding: 20px;
-    max-width: 500px;
-    margin: auto;
+/* Configurações Gerais */
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
-h2 {
+body {
+    background-color: #0d1117;
+    color: #e6edf3;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.mainPanel {
+    width: 100%;
+    max-width: 900px; /* Largura máxima no PC */
+}
+
+h2, h4 {
     text-align: center;
-    color: #00e0ff;
-    font-size: 22px;
+    color: #58a6ff;
+}
+
+/* Painel de Configuração (Topo) */
+.config-box {
+    background: #161b22;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #30363d;
+    margin-bottom: 25px;
 }
 
 label {
-    font-weight: bold;
-    color: #ddd;
-    font-size: 16px;
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
 }
 
-input, select, button {
-    margin: 5px 0;
-    padding: 8px 10px;
-    border-radius: 6px;
-    border: none;
-    font-size: 16px;
+/* Inputs e Selects */
+select, input {
     width: 100%;
-    box-sizing: border-box;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background: #0d1117;
+    color: #fff;
+    border: 1px solid #30363d;
+    font-size: 16px; /* Evita zoom automático no iPhone */
 }
 
-select {
-    background: #111;
-    color: white;
-}
-
-button {
-    background: #0077ff;
-    color: white;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-button:hover {
-    background: #00b3ff;
-    transform: scale(1.05);
+/* Grupos de Botões (Espessura e Velocidade) */
+.btnGroup {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 8px;
+    margin-bottom: 15px;
 }
 
 .btnGroup button {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    margin-top: 5px;
-    background: #333;
-    color: white;
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btnGroup button.selecionado {
+    background: #1f6feb;
+    border-color: #58a6ff;
+    color: #fff;
+}
+
+/* Botão Confirmar Principal */
+#confirmarBtn {
     width: 100%;
-    font-size: 16px;
-}
-
-.btnGroup button img {
-    margin-right: 8px;
-}
-
-#espessuras button {
-    background: #ff9800;
-}
-
-#velocidades button {
-    background: #4caf50;
-}
-
-.selecionado {
-    background: #00e0ff !important;
-    color: black !important;
-    transform: scale(1.1);
-}
-
-#resultado {
-    margin-top: 20px;
+    background: #238636;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
     padding: 15px;
-    background: #111;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#confirmarBtn:active {
+    background: #2ea043;
+}
+
+/* Layout das Bobinas (Onde a mágica acontece) */
+#containerBobinas {
+    display: grid;
+    grid-template-columns: 1fr; /* Padrão: 1 coluna (Celular) */
+    gap: 20px;
+}
+
+/* Quando a tela for maior que 600px (Tablet/PC) */
+@media (min-width: 600px) {
+    #containerBobinas {
+        grid-template-columns: 1fr 1fr; /* 2 colunas (Lado a lado no PC) */
+    }
+}
+
+.grupo-container {
+    background: #161b22;
+    border: 1px solid #30363d;
+    padding: 15px;
+    border-radius: 12px;
+}
+
+/* Estilo dos Cards de Bobina */
+.card-bobina {
+    margin-top: 10px;
+    padding: 15px;
     border-radius: 10px;
-    box-shadow: 0 0 15px #00e0ff;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
 }
 
-#metros {
-    font-size: 28px;
-    color: #00ff9c;
-}
-
-#tempo {
-    font-size: 24px;
-    color: #ffd54f;
-}
-
-#hora {
-    font-size: 22px;
-    color: #ff6b6b;
-}
-
-#passos {
-    font-size: 14px;
-    color: #ccc;
-}
-
+/* Botão Trocar Usuário lá embaixo */
 #resetUser {
-    margin-top: 20px;
-    background: #ff4444;
-}
-
-.welcomeScreen {
-    text-align: center;
-    padding: 20px;
-}
-
-.saudacao {
-    margin-bottom: 10px;
-    font-size: 16px;
-}
-/* Classes para o Alarme */
-.alerta-aviso {
-    background: #ff9800 !important; /* Laranja para 10 min */
-    color: white !important;
-    animation: piscar 1.5s infinite;
-    box-shadow: 0 0 20px #ff9800 !important;
-}
-
-.alerta-critico {
-    background: #ff4444 !important; /* Vermelho para 5 min */
-    color: white !important;
-    animation: piscar 0.8s infinite;
-    box-shadow: 0 0 25px #ff4444 !important;
-}
-
-@keyframes piscar {
-    0% { opacity: 1; }
-    50% { opacity: 0.7; }
-    100% { opacity: 1; }
+    display: block;
+    width: 150px;
+    margin: 40px auto;
+    background: transparent;
+    color: #8b949e;
+    border: 1px solid #30363d;
+    font-size: 12px;
+    padding: 8px;
+    border-radius: 6px;
 }
