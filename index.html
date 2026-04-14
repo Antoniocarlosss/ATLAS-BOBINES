@@ -1,40 +1,65 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!DOCTYPE html> 
+<html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Atlas - Controle de Produção</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Bobina Atlas</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.png">
+<meta name="theme-color" content="#0077ff">
+
+<!-- GOOGLE ANALYTICS -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J6VCHDN4X2"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-J6VCHDN4X2');
+</script>
+
 </head>
 <body>
 
-<div id="mainPanel" class="mainPanel">
-    <button id="btnParadaGeral" class="emergency-btn">🛑 PARAR MÁQUINA</button>
-
-    <div class="config-box">
-        <label>Nova Bobina:</label>
-        <select id="selecaoBobina">
-            <option value="1">Bobina 1</option>
-            <option value="2">Bobina 2</option>
-            <option value="3">Bobina 3</option>
-            <option value="4">Bobina 4</option>
-        </select>
-
-        <label>Largura (cm):</label>
-        <select id="largura"></select>
-
-        <label>Espessura (mm):</label>
-        <div id="espessuras" class="btnGroup"></div>
-
-        <label>Velocidade (m/min):</label>
-        <div id="velocidades" class="btnGroup"></div>
-
-        <button id="confirmarBtn">ADICIONAR À LINHA</button>
-    </div>
-
-    <div id="containerBobinas" class="grid-bobinas"></div>
+<div id="welcomeScreen" class="welcomeScreen">
+    <h2>Bem-vindo! Primeiro acesso</h2>
+    <label>Digite seu nome:</label><br>
+    <input type="text" id="nomeUsuarioInput" placeholder="Seu nome"><br><br>
+    <label>Escolha o idioma:</label><br>
+    <select id="idiomaSelect">
+        <option value="pt">Português</option>
+        <option value="en">English</option>
+        <option value="hi">Hindi</option>
+    </select><br><br>
+    <button id="entrarBtn">Entrar</button>
 </div>
 
+<div id="mainPanel" class="mainPanel" style="display:none;">
+
+<h2 id="tituloPrograma">Calculadora de Bobina</h2>
+
+<div id="saudacao" class="saudacao"></div>
+
+<label id="labelLargura">Largura da bobina externa (cm)</label><br>
+<select id="largura"></select><br><br>
+
+<label id="labelEspessura">Espessura da chapa (mm)</label><br>
+<div id="espessuras" class="btnGroup"></div><br>
+
+<label id="labelVelocidade">Velocidade da máquina (m/min)</label><br>
+<div id="velocidades" class="btnGroup"></div><br>
+
+<div id="resultado">
+    <h3 id="passos"></h3>
+    <h3 id="metros"></h3>
+    <h3 id="tempo"></h3>
+    <h3 id="hora"></h3>
+</div>
+
+<button id="resetUser">Trocar usuário</button>
+
 <script src="script.js"></script>
+</div>
 </body>
 </html>
