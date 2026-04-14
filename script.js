@@ -1,181 +1,132 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const btnParadaGeral = document.getElementById("btnParadaGeral");
-    const confirmarBtn = document.getElementById("confirmarBtn");
-    const containerBobinas = document.getElementById("containerBobinas");
-    
-    let maquinaLigada = localStorage.getItem("maquinaLigada") !== "false";
-    let espSel = 0.32;
-    let velSel = 10;
+document.addEventListener("DOMContentLoaded", ()=>{
 
-    let dadosBobinas = JSON.parse(localStorage.getItem("dadosBobinas")) || {
-        "1": { metros: 0, segundos: 0, mps: 0, ativo: false, ultimaAtualizacao: 0 },
-        "2": { metros: 0, segundos: 0, mps: 0, ativo: false, ultimaAtualizacao: 0 },
-        "3": { metros: 0, segundos: 0, mps: 0, ativo: false, ultimaAtualizacao: 0 },
-        "4": { metros: 0, segundos: 0, mps: 0, ativo: false, ultimaAtualizacao: 0 }
-    };
+const welcome = document.getElementById("welcomeScreen")
+const mainPanel = document.getElementById("mainPanel")
+const nomeInput = document.getElementById("nomeUsuarioInput")
+const idiomaSelect = document.getElementById("idiomaSelect")
+const entrar = document.getElementById("entrarBtn")
+const resetBtn = document.getElementById("resetUser")
 
-    // Inicialização
-    configurarInputs();
-    atualizarBotaoParada();
-    setInterval(atualizarTimers, 1000);
-    renderizar();
+let nome = localStorage.getItem("nomeUsuario")
+let idioma = localStorage.getItem("idiomaUsuario") || "pt"
 
-    function configurarInputs() {
-        const larg = document.getElementById("largura");
-        for (let i = 0.5; i <= 50; i += 0.5) {
-            let o = document.createElement("option");
-            o.value = i; o.text = i + " cm";
-            if(i === 15) o.selected = true;
-            larg.appendChild(o);
-        }
+const textos = {
+    pt:{titulo:"Calculadora de Bobina",largura:"Largura da bobina externa (cm)",espessura:"Espessura da chapa (mm)",velocidade:"Velocidade da máquina (m/min)",falta:"Falta para acabar: ",tempo:"Falta ",acaba:"Provavelmente acaba às: ",trocar:"Trocar usuário",primeiro:"Primeiro acesso"},
+    en:{titulo:"Coil Calculator",largura:"Width",espessura:"Thickness",velocidade:"Speed",falta:"Remaining: ",tempo:"Remaining ",acaba:"Finish at: ",trocar:"Change user",primeiro:"First access"},
+    hi:{titulo:"कॉइल कैलकुलेटर",largura:"चौड़ाई",espessura:"मोटाई",velocidade:"गति",falta:"बाकी: ",tempo:"बाकी ",acaba:"समाप्त: ",trocar:"यूज़र बदलें",primeiro:"पहली बार"}
+}
 
-        const espDiv = document.getElementById("espessuras");
-        [0.28, 0.30, 0.32, 0.35, 0.38, 0.40,0.41,0.43, 0.45,0.68].forEach(e => {
-            let b = document.createElement("button");
-            b.innerText = e;
-            if(e === 0.32) b.classList.add("selecionado");
-            b.onclick = () => {
-                espDiv.querySelectorAll("button").forEach(x => x.classList.remove("selecionado"));
-                b.classList.add("selecionado");
-                espSel = e;
-            };
-            espDiv.appendChild(b);
-        });
+function showMain(){
+    welcome.style.display="none"
+    mainPanel.style.display="block"
+    start()
+}
 
-        const velDiv = document.getElementById("velocidades");
-        [5 , 6 , 8, 9 , 10, 11, 12].forEach(v => {
-            let b = document.createElement("button");
-            b.innerText = v;
-            if(v === 10) b.classList.add("selecionado");
-            b.onclick = () => {
-                velDiv.querySelectorAll("button").forEach(x => x.classList.remove("selecionado"));
-                b.classList.add("selecionado");
-                velSel = v;
-            };
-            velDiv.appendChild(b);
-        });
+if(nome){
+    showMain()
+}else{
+    entrar.onclick = ()=>{
+        nome = nomeInput.value
+        idioma = idiomaSelect.value
+        localStorage.setItem("nomeUsuario", nome)
+        localStorage.setItem("idiomaUsuario", idioma)
+        showMain()
+    }
+}
+
+// botão trocar usuário
+resetBtn.onclick = ()=>{
+    localStorage.removeItem("nomeUsuario")
+    localStorage.removeItem("idiomaUsuario")
+    localStorage.removeItem("ultimo")
+    location.reload()
+}
+
+function start(){
+    const t = textos[idioma]
+    document.getElementById("tituloPrograma").innerText = t.titulo
+    document.getElementById("labelLargura").innerText = t.largura
+    document.getElementById("labelEspessura").innerText = t.espessura
+    document.getElementById("labelVelocidade").innerText = t.velocidade
+    resetBtn.innerText = t.trocar
+
+    // saudação
+    const saudacao = document.getElementById("saudacao")
+    function atualizarSaudacao(){
+        const agora = new Date()
+        let h = agora.getHours()
+        let s="Boa noite"
+        if(h<12)s="Bom dia"
+        else if(h<18)s="Boa tarde"
+        const ultimo = localStorage.getItem("ultimo") || t.primeiro
+        saudacao.innerHTML = s+", "+nome+"<br>Último acesso: "+ultimo+"<br>"+agora.toLocaleTimeString()
+    }
+    setInterval(atualizarSaudacao,1000)
+    atualizarSaudacao()
+    window.addEventListener("beforeunload", ()=>{
+        localStorage.setItem("ultimo", new Date().toLocaleString())
+    })
+
+    // largura
+    const largura = document.getElementById("largura")
+    for(let i=1;i<=50;i+=0.5){
+        let o=document.createElement("option")
+        o.value=i
+        o.text=(i%1===0)? i+" cm":i.toFixed(1)+" cm"
+        largura.appendChild(o)
     }
 
-    confirmarBtn.onclick = () => {
-        const id = document.getElementById("selecaoBobina").value;
-        const largura_mm = parseFloat(document.getElementById("largura").value) * 10;
-        const metros = Math.round(((largura_mm / espSel) * 3.14 * (500 + largura_mm)) / 1000);
-        
-        dadosBobinas[id].metros = metros;
-        dadosBobinas[id].segundos = Math.round(metros / velSel) * 60;
-        dadosBobinas[id].mps = velSel / 60;
-        dadosBobinas[id].ultimaAtualizacao = Date.now();
-        
-        // Regra: Se a outra bobina do par estiver vazia ou parada, esta entra ativa
-        const par = (id === "1" || id === "2") ? ["1", "2"] : ["3", "4"];
-        const outra = par.find(i => i !== id);
-        
-        if (!dadosBobinas[outra].ativo || dadosBobinas[outra].metros <= 0) {
-            dadosBobinas[id].ativo = true;
-            dadosBobinas[outra].ativo = false;
-        } else {
-            dadosBobinas[id].ativo = false; // Fica como reserva (estoque)
+    // espessura
+    const espDiv=document.getElementById("espessuras")
+    const esp=[0.28,0.30,0.32,0.35,0.38,0.40,0.43,0.45,0.68]
+    let espSel=0.32
+    esp.forEach(e=>{
+        let b=document.createElement("button")
+        b.innerHTML=`<img src="https://img.icons8.com/dotty/80/line-width.png" style="width:18px;height:18px;margin-right:5px;"> ${e} mm`
+        b.onclick=()=>{
+            espDiv.querySelectorAll("button").forEach(x=>x.classList.remove("selecionado"))
+            b.classList.add("selecionado")
+            espSel=e
+            calc()
         }
+        espDiv.appendChild(b)
+    })
 
-        salvar();
-        renderizar();
-    };
-
-    btnParadaGeral.onclick = () => {
-        maquinaLigada = !maquinaLigada;
-        localStorage.setItem("maquinaLigada", maquinaLigada);
-        atualizarBotaoParada();
-        renderizar();
-    };
-
-    function atualizarBotaoParada() {
-        btnParadaGeral.innerText = maquinaLigada ? "🛑 PARAR MÁQUINA" : "▶️ LIGAR MÁQUINA";
-        btnParadaGeral.style.background = maquinaLigada ? "#ce2029" : "#238636";
-    }
-
-    function atualizarTimers() {
-        if (!maquinaLigada) return;
-        let mudou = false;
-        for (let id in dadosBobinas) {
-            if (dadosBobinas[id].ativo && dadosBobinas[id].segundos > 0) {
-                dadosBobinas[id].segundos--;
-                dadosBobinas[id].metros -= dadosBobinas[id].mps;
-                dadosBobinas[id].ultimaAtualizacao = Date.now();
-                mudou = true;
-                
-                if (dadosBobinas[id].segundos <= 0) {
-                    verificarFimDeBobina(id);
-                }
-            }
+    // velocidade
+    const velDiv=document.getElementById("velocidades")
+    const vel=[5,6,7,8,9,10,11,12]
+    let velSel=10
+    vel.forEach(v=>{
+        let b=document.createElement("button")
+        b.innerHTML=`<img src="https://img.icons8.com/color/48/speed.png" style="width:18px;height:18px;margin-right:5px;"> ${v} m/min`
+        b.onclick=()=>{
+            velDiv.querySelectorAll("button").forEach(x=>x.classList.remove("selecionado"))
+            b.classList.add("selecionado")
+            velSel=v
+            calc()
         }
-        if (mudou) { salvar(); renderizar(); }
+        velDiv.appendChild(b)
+    })
+
+    function calc(){
+        const interno=500
+        const pi=3.14
+        const largura_cm=parseFloat(largura.value)
+        const largura_mm=largura_cm*10
+        const p1=largura_mm/espSel
+        const p2=p1*pi
+        const soma=interno+largura_mm
+        const metros=Math.round((p2*soma)/1000)
+        const tempoTotalMin=Math.round(metros/velSel)
+        const fim=new Date()
+        fim.setMinutes(fim.getMinutes()+tempoTotalMin)
+        const horas=Math.floor(tempoTotalMin/60)
+        const minutos=tempoTotalMin%60
+        let textoTempo = (horas>0)? horas+" hr e "+minutos+" min" : minutos+" minutos"
+        document.getElementById("metros").innerText = t.falta + metros + " metros"
+        document.getElementById("tempo").innerText = t.tempo + textoTempo
+        document.getElementById("hora").innerText = t.acaba + fim.toLocaleTimeString()
     }
-
-    function verificarFimDeBobina(idFinalizada) {
-        // 1. Zera a bobina que acabou
-        dadosBobinas[idFinalizada] = { metros: 0, segundos: 0, mps: 0, ativo: false, ultimaAtualizacao: 0 };
-        
-        // 2. Procura a vizinha do par para iniciar automaticamente
-        const par = (idFinalizada === "1" || idFinalizada === "2") ? ["1", "2"] : ["3", "4"];
-        const vizinhaId = par.find(i => i !== idFinalizada);
-
-        if (dadosBobinas[vizinhaId].metros > 0) {
-            dadosBobinas[vizinhaId].ativo = true;
-            dadosBobinas[vizinhaId].ultimaAtualizacao = Date.now();
-            console.log(`Bobina ${idFinalizada} acabou. Iniciando Bobina ${vizinhaId} automaticamente.`);
-        }
-    }
-
-    window.alternarStatus = (id) => {
-        const par = (id === "1" || id === "2") ? ["1", "2"] : ["3", "4"];
-        const outra = par.find(i => i !== id);
-
-        if (!dadosBobinas[id].ativo) {
-            dadosBobinas[id].ativo = true;
-            dadosBobinas[outra].ativo = false;
-        } else {
-            dadosBobinas[id].ativo = false;
-        }
-        salvar();
-        renderizar();
-    };
-
-    function salvar() { localStorage.setItem("dadosBobinas", JSON.stringify(dadosBobinas)); }
-
-    function renderizar() {
-        containerBobinas.innerHTML = "";
-        const linhas = [ {n: "LINHA 1", ids: ["1","2"]}, {n: "LINHA 2", ids: ["3","4"]} ];
-        
-        linhas.forEach(l => {
-            const div = document.createElement("div");
-            div.className = "linha-box";
-            div.innerHTML = `<h3 style="text-align:center; color:#58a6ff; font-size:14px; margin-bottom:10px;">${l.n}</h3>`;
-            
-            l.ids.forEach(id => {
-                const b = dadosBobinas[id];
-                if (b.metros <= 0) return;
-                
-                const rodando = b.ativo && maquinaLigada;
-                const card = document.createElement("div");
-                card.className = `card ${rodando ? 'ativo' : 'pausado'}`;
-                card.style = `padding:15px; border-radius:10px; margin-bottom:10px; border:2px solid ${rodando ? '#28a745' : '#444'}; background:${rodando ? '#0b2e13' : '#161b22'};`;
-                
-                card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-weight:bold; color:#fff;">BOBINA ${id}</span>
-                        <button onclick="alternarStatus('${id}')" style="padding:5px 10px; border-radius:5px; border:none; cursor:pointer; background:${b.ativo ? '#dc3545' : '#28a745'}; color:white; font-size:10px; font-weight:bold;">
-                            ${b.ativo ? 'PAUSAR' : 'INICIAR'}
-                        </button>
-                    </div>
-                    <div style="font-size:24px; color:#fff; font-family:monospace; margin:10px 0;">${b.metros.toFixed(1)} m</div>
-                    <div style="font-size:13px; color:#ffd54f;">${rodando ? 'RODANDO...' : 'AGUARDANDO'} | ${Math.floor(b.segundos/60)}m ${b.segundos%60}s</div>
-                    <button style="background:none; border:none; color:#ff4444; cursor:pointer; text-decoration:underline; font-size:10px; margin-top:10px;" onclick="removerBobina('${id}')">Limpar/Zerar</button>
-                `;
-                div.appendChild(card);
-            });
-            containerBobinas.appendChild(div);
-        });
-    }
-
-    window.removerBobina = (id) => { if(confirm("Deseja zerar esta bobina manualmente?")) { dadosBobinas[id] = { metros: 0, segundos: 0, mps: 0, ativo: false, ultimaAtualizacao: 0 }; salvar(); renderizar(); } };
-});
+    calc()
+}
+})
