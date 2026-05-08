@@ -148,25 +148,15 @@ function start(){
     }
 
     function criarVisual3d(){
-        const container = document.getElementById("coilViewer")
-        const fotoAviso = document.getElementById("fotoAviso")
-        const bobina = document.getElementById("bobinaAnimada")
-        const folha = document.getElementById("folhaSaindo")
-        const testeFoto = new Image()
-        testeFoto.onload = ()=>{
-            fotoAviso.style.display = "none"
-        }
-        testeFoto.onerror = ()=>{
-            fotoAviso.style.display = "block"
-        }
-        testeFoto.src = "maquina.jpg"
+        const bobina = document.getElementById("bobinaAnimadaSvg")
+        const folha = document.getElementById("folhaSaindoSvg")
 
         function update(next){
             const segundosPorVolta = Math.max(0.8, 4.8 - (next.velocidade * 0.28))
             const largura = Math.min(1.12, Math.max(0.88, next.larguraCm / 14))
             bobina.style.animationDuration = segundosPorVolta + "s"
             folha.style.animationDuration = Math.max(0.45, segundosPorVolta / 2.4) + "s"
-            folha.style.height = (7 + largura * 2.5) + "%"
+            folha.style.transform = "scaleY(" + largura + ")"
         }
 
         return {update, resize(){}}

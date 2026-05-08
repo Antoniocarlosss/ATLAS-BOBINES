@@ -133,131 +133,46 @@ button:hover {
 .coilViewer {
     position: relative;
     width: 100%;
-    height: 300px;
+    height: 310px;
     margin-top: 12px;
     overflow: hidden;
     background: #161b22;
     border-radius: 8px;
 }
 
-.fotoRealViewer {
-    background-image: url("maquina.jpg");
-    background-size: cover;
-    background-position: center;
+.machineSvg {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
-.fotoAviso {
-    position: absolute;
-    inset: auto 14px 14px 14px;
-    padding: 10px;
-    background: rgba(0,0,0,0.68);
-    border-radius: 6px;
-    color: white;
-    font-size: 14px;
-    text-align: center;
-    z-index: 4;
-}
-
-.bobinaAnimada {
-    position: absolute;
-    left: 70.7%;
-    top: 42.7%;
-    width: 20.5%;
-    aspect-ratio: 1 / 1;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    z-index: 2;
+.bobinaAnimadaSvg {
     animation: girarBobina 2.8s linear infinite;
-    filter: drop-shadow(0 5px 8px rgba(0,0,0,0.35));
+    transform-box: fill-box;
+    transform-origin: center;
 }
 
-.bobinaAnimada::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background:
-        radial-gradient(circle at 43% 38%, rgba(255,255,255,0.9), rgba(235,238,236,0.65) 19%, rgba(205,210,210,0.22) 46%, rgba(120,130,135,0.18) 58%, rgba(255,255,255,0) 61%),
-        conic-gradient(from 0deg, rgba(255,255,255,0.15), rgba(170,176,178,0.36), rgba(255,255,255,0.18), rgba(190,196,197,0.38), rgba(255,255,255,0.15));
-    border: 2px solid rgba(238,241,239,0.72);
-}
-
-.anelExterno {
-    position: absolute;
-    inset: 2.5%;
-    border: 4px solid rgba(245,247,244,0.72);
-    border-radius: 50%;
-}
-
-.mioloBobina {
-    position: absolute;
-    inset: 31%;
-    border-radius: 50%;
-    background: radial-gradient(circle, #686e70 0 18%, #2c3034 19% 72%, #14181c 73%);
-    border: 3px solid rgba(115,105,84,0.85);
-}
-
-.garraBobina {
-    position: absolute;
-    left: 47%;
-    top: 29%;
-    width: 7%;
-    height: 42%;
-    background: #11161b;
-    border-radius: 4px;
-    transform-origin: 50% 50%;
-}
-
-.garraA {
-    transform: rotate(0deg);
-}
-
-.garraB {
-    transform: rotate(120deg);
-}
-
-.garraC {
-    transform: rotate(240deg);
-}
-
-.eixoBobina {
-    position: absolute;
-    inset: 43%;
-    border-radius: 50%;
-    background: radial-gradient(circle, #9ea4a3, #4c5354 60%, #25292b);
-    border: 1px solid #24282a;
-}
-
-.folhaSaindo {
-    position: absolute;
-    left: 66%;
-    top: 66%;
-    width: 28%;
-    height: 9%;
-    transform: rotate(-16deg);
+.folhaSaindoSvg {
+    animation: puxarFolha 1s ease-in-out infinite alternate;
+    transform-box: fill-box;
     transform-origin: left center;
-    border-radius: 3px;
-    background: linear-gradient(90deg, rgba(238,241,237,0.96), rgba(255,255,255,0.78), rgba(210,215,214,0.82));
-    opacity: 0.82;
-    z-index: 1;
-    animation: puxarFolha 1.2s ease-in-out infinite alternate;
 }
 
 @keyframes girarBobina {
     from {
-        transform: translate(-50%, -50%) rotate(0deg);
+        transform: rotate(0deg);
     }
     to {
-        transform: translate(-50%, -50%) rotate(360deg);
+        transform: rotate(360deg);
     }
 }
 
 @keyframes puxarFolha {
     from {
-        translate: -2px 0;
+        transform: translateX(-4px);
     }
     to {
-        translate: 8px 2px;
+        transform: translateX(12px);
     }
 }
 
