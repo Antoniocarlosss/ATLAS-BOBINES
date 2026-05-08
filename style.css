@@ -133,10 +133,10 @@ button:hover {
 .coilViewer {
     position: relative;
     width: 100%;
-    height: 260px;
+    height: 300px;
     margin-top: 12px;
     overflow: hidden;
-    background: radial-gradient(circle at 50% 35%, #26354d, #090c12 72%);
+    background: linear-gradient(180deg, #e9eef3 0%, #b7c1ca 52%, #5d6670 53%, #252b33 100%);
     border-radius: 8px;
 }
 
@@ -174,7 +174,7 @@ button:hover {
     }
 
     .coilViewer {
-        height: 220px;
+        height: 250px;
     }
 
     .visual3dInfo {

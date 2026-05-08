@@ -155,51 +155,92 @@ function start(){
         }
 
         const scene = new THREE.Scene()
-        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100)
-        camera.position.set(0, 2.2, 6)
+        const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100)
+        camera.position.set(0, 0.25, 8)
 
         const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true})
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
         container.appendChild(renderer.domElement)
 
-        const light = new THREE.DirectionalLight(0xffffff, 1.8)
-        light.position.set(3, 4, 5)
+        const light = new THREE.DirectionalLight(0xffffff, 1.55)
+        light.position.set(2, 4, 5)
         scene.add(light)
-        scene.add(new THREE.AmbientLight(0x9ecfff, 0.75))
+        scene.add(new THREE.AmbientLight(0xffffff, 0.9))
 
         const coilGroup = new THREE.Group()
+        coilGroup.position.set(-0.95, 0.75, 0)
         scene.add(coilGroup)
 
-        const metal = new THREE.MeshStandardMaterial({color:0x9fb6c9, metalness:0.55, roughness:0.28})
-        const edge = new THREE.MeshStandardMaterial({color:0x1c2f45, metalness:0.35, roughness:0.4})
-        const sheetMat = new THREE.MeshStandardMaterial({color:0x00e0ff, metalness:0.25, roughness:0.22})
+        const whiteCoil = new THREE.MeshStandardMaterial({color:0xf3f4ef, metalness:0.08, roughness:0.42})
+        const softShadow = new THREE.MeshStandardMaterial({color:0xcfd4d7, metalness:0.05, roughness:0.55})
+        const darkMetal = new THREE.MeshStandardMaterial({color:0x1e242b, metalness:0.55, roughness:0.34})
+        const steel = new THREE.MeshStandardMaterial({color:0x8f969b, metalness:0.45, roughness:0.32})
+        const bluePaint = new THREE.MeshStandardMaterial({color:0x006fd6, metalness:0.2, roughness:0.38})
+        const sheetMat = new THREE.MeshStandardMaterial({color:0xf4f6f2, metalness:0.12, roughness:0.35, side:THREE.DoubleSide})
 
-        const coil = new THREE.Mesh(new THREE.CylinderGeometry(1.45, 1.45, 1.35, 72, 1, true), metal)
-        coil.rotation.z = Math.PI / 2
-        coilGroup.add(coil)
+        const coilBack = new THREE.Mesh(new THREE.CylinderGeometry(1.82, 1.82, 0.62, 96), softShadow)
+        coilBack.rotation.x = Math.PI / 2
+        coilBack.position.z = -0.18
+        coilGroup.add(coilBack)
 
-        const leftCap = new THREE.Mesh(new THREE.TorusGeometry(1.45, 0.045, 10, 72), edge)
-        leftCap.position.x = -0.68
-        leftCap.rotation.y = Math.PI / 2
-        coilGroup.add(leftCap)
+        const coilFace = new THREE.Mesh(new THREE.CylinderGeometry(1.68, 1.68, 0.2, 128), whiteCoil)
+        coilFace.rotation.x = Math.PI / 2
+        coilFace.position.z = 0.04
+        coilGroup.add(coilFace)
 
-        const rightCap = leftCap.clone()
-        rightCap.position.x = 0.68
-        coilGroup.add(rightCap)
+        const outerLine = new THREE.Mesh(new THREE.TorusGeometry(1.68, 0.025, 10, 128), softShadow)
+        coilGroup.add(outerLine)
 
-        const core = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 1.42, 48), edge)
-        core.rotation.z = Math.PI / 2
-        coilGroup.add(core)
+        const innerRolls = []
+        for(let r=0.76; r<=1.48; r+=0.18){
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.011, 8, 96), softShadow)
+            ring.position.z = 0.16
+            coilGroup.add(ring)
+            innerRolls.push(ring)
+        }
 
-        const sheet = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.035, 1), sheetMat)
-        sheet.position.set(1.85, -0.35, 0)
-        sheet.rotation.z = -0.12
+        const coreRing = new THREE.Mesh(new THREE.TorusGeometry(0.58, 0.08, 12, 64), steel)
+        coreRing.position.z = 0.2
+        coilGroup.add(coreRing)
+
+        const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.24, 6), darkMetal)
+        hub.rotation.x = Math.PI / 2
+        hub.position.z = 0.28
+        coilGroup.add(hub)
+
+        const center = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.32, 32), steel)
+        center.rotation.x = Math.PI / 2
+        center.position.z = 0.43
+        coilGroup.add(center)
+
+        const arm = new THREE.Mesh(new THREE.BoxGeometry(0.34, 3.15, 0.28), darkMetal)
+        arm.position.set(-1.95, -0.5, -0.18)
+        arm.rotation.z = -0.11
+        scene.add(arm)
+
+        const base = new THREE.Mesh(new THREE.BoxGeometry(3.3, 0.42, 1.2), bluePaint)
+        base.position.set(-0.7, -2.15, -0.35)
+        scene.add(base)
+
+        const blueStand = new THREE.Mesh(new THREE.BoxGeometry(1.18, 2.55, 0.48), bluePaint)
+        blueStand.position.set(-1.1, -0.8, -0.5)
+        blueStand.rotation.z = -0.18
+        scene.add(blueStand)
+
+        const table = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.22, 1.35), darkMetal)
+        table.position.set(1.78, -1.95, -0.2)
+        table.rotation.z = 0.08
+        scene.add(table)
+
+        const sheet = new THREE.Mesh(new THREE.PlaneGeometry(3.85, 1.05, 16, 1), sheetMat)
+        sheet.position.set(1.15, -1.42, 0.28)
+        sheet.rotation.set(-0.14, 0, 0.09)
         scene.add(sheet)
 
-        const rollGuide = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 1.2, 36), edge)
-        rollGuide.position.set(2.85, -0.42, 0)
-        rollGuide.rotation.x = Math.PI / 2
-        scene.add(rollGuide)
+        const leadingSheet = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 1.05, 8, 1), sheetMat)
+        leadingSheet.position.set(-0.22, -1.05, 0.34)
+        leadingSheet.rotation.set(-0.34, 0, -0.34)
+        scene.add(leadingSheet)
 
         let params = {larguraCm:10, espessura:0.32, velocidade:10, metros:0}
         let frame = 0
@@ -215,18 +256,21 @@ function start(){
 
         function update(next){
             params = next
-            const widthScale = Math.min(1.55, Math.max(0.55, params.larguraCm / 16))
-            const radiusScale = Math.min(1.28, Math.max(0.72, params.metros / 1300))
-            coilGroup.scale.set(widthScale, radiusScale, radiusScale)
-            sheet.scale.z = widthScale
+            const widthScale = Math.min(1.18, Math.max(0.82, params.larguraCm / 14))
+            const radiusScale = Math.min(1.16, Math.max(0.78, params.metros / 1200))
+            coilGroup.scale.set(radiusScale, radiusScale, 1)
+            sheet.scale.y = widthScale
+            leadingSheet.scale.y = widthScale
         }
 
         function animate(){
             frame += 0.016 * (params.velocidade / 8)
-            coilGroup.rotation.x = -0.35
-            coilGroup.rotation.y = frame
-            sheet.position.x = 1.75 + Math.sin(frame * 3) * 0.08
-            sheet.material.emissive = new THREE.Color(0x003344)
+            coilGroup.rotation.z = -frame
+            innerRolls.forEach((ring, index)=>{
+                ring.rotation.z = frame * (0.35 + index * 0.03)
+            })
+            sheet.position.x = 1.15 + (frame % 0.45) * 0.18
+            leadingSheet.rotation.z = -0.34 + Math.sin(frame * 2.4) * 0.025
             renderer.render(scene, camera)
             requestAnimationFrame(animate)
         }
