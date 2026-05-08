@@ -57,8 +57,22 @@ gtag('config', 'G-J6VCHDN4X2');
     <h3 id="hora"></h3>
 </div>
 
+<section id="visual3dPanel" class="visual3dPanel">
+    <div class="visual3dHeader">
+        <h3 id="labelVisual3d">Visual 3D da bobina</h3>
+        <button id="toggleVisual3d" type="button">Ocultar</button>
+    </div>
+    <div id="coilViewer" class="coilViewer" aria-label="Visualizacao 3D da bobina desenrolando"></div>
+    <div class="visual3dInfo">
+        <span id="visualMetros">0 m</span>
+        <span id="visualVelocidade">0 m/min</span>
+        <span id="visualEspessura">0 mm</span>
+    </div>
+</section>
+
 <button id="resetUser">Trocar usuário</button>
 
+<script src="https://unpkg.com/three@0.148.0/build/three.min.js"></script>
 <script src="script.js"></script>
 </div>
 </body>
