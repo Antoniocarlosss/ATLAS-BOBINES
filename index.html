@@ -23,16 +23,35 @@ gtag('config', 'G-J6VCHDN4X2');
 <body>
 
 <div id="welcomeScreen" class="welcomeScreen">
-    <h2>Bem-vindo! Primeiro acesso</h2>
-    <label>Digite seu nome:</label><br>
-    <input type="text" id="nomeUsuarioInput" placeholder="Seu nome"><br><br>
-    <label>Escolha o idioma:</label><br>
-    <select id="idiomaSelect">
-        <option value="pt">Português</option>
-        <option value="en">English</option>
-        <option value="hi">Hindi</option>
-    </select><br><br>
-    <button id="entrarBtn">Entrar</button>
+    <div class="loginCard">
+        <div class="loginBrand">
+            <img src="icon.png" alt="Atlas">
+            <div>
+                <strong>Atlas Bobines</strong>
+                <span>Primeiro acesso</span>
+            </div>
+        </div>
+
+        <h1>Vamos preparar sua calculadora</h1>
+        <p>Informe seu nome e idioma. Depois disso, o app abre direto para esta conta.</p>
+
+        <div class="formField">
+            <label for="nomeUsuarioInput">Nome do operador</label>
+            <input type="text" id="nomeUsuarioInput" placeholder="Ex: Antonio" autocomplete="name" maxlength="32">
+            <small id="nomeErro">Digite um nome para continuar.</small>
+        </div>
+
+        <div class="formField">
+            <label for="idiomaSelect">Idioma</label>
+            <select id="idiomaSelect">
+                <option value="pt">Português</option>
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+            </select>
+        </div>
+
+        <button id="entrarBtn" class="primaryLoginBtn">Entrar</button>
+    </div>
 </div>
 
 <div id="mainPanel" class="mainPanel" style="display:none;">

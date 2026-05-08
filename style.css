@@ -12,6 +12,117 @@ body {
     width: 100%;
 }
 
+.welcomeScreen {
+    min-height: calc(100vh - 40px);
+    display: grid;
+    align-items: center;
+}
+
+.loginCard {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 22px;
+    background: #111722;
+    border: 1px solid rgba(0,224,255,0.28);
+    border-radius: 8px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.34);
+}
+
+.loginBrand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.loginBrand img {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    background: white;
+    object-fit: cover;
+}
+
+.loginBrand strong,
+.loginBrand span {
+    display: block;
+}
+
+.loginBrand strong {
+    color: #ffffff;
+    font-size: 18px;
+}
+
+.loginBrand span {
+    margin-top: 3px;
+    color: #9fb5c8;
+    font-size: 13px;
+}
+
+.loginCard h1 {
+    margin: 0;
+    color: #00e0ff;
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+.loginCard p {
+    margin: 10px 0 22px;
+    color: #c4d0d9;
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+.formField {
+    margin-bottom: 15px;
+}
+
+.formField label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 14px;
+}
+
+.formField input,
+.formField select {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 12px 11px;
+    border: 1px solid #2d4054;
+    border-radius: 6px;
+    background: #080d14;
+    color: white;
+    font-size: 16px;
+}
+
+.formField input:focus,
+.formField select:focus {
+    outline: 2px solid #00e0ff;
+    border-color: transparent;
+}
+
+.formField small {
+    display: none;
+    margin-top: 6px;
+    color: #ff9b9b;
+    font-size: 13px;
+}
+
+.formField.erro small {
+    display: block;
+}
+
+.formField.erro input {
+    border-color: #ff6b6b;
+}
+
+.primaryLoginBtn {
+    margin: 8px 0 0;
+    padding: 13px;
+    font-weight: bold;
+}
+
 h2 {
     text-align: center;
     color: #00e0ff;
@@ -210,6 +321,18 @@ button:hover {
 @media (max-width: 420px) {
     body {
         padding: 12px;
+    }
+
+    .welcomeScreen {
+        min-height: calc(100vh - 24px);
+    }
+
+    .loginCard {
+        padding: 18px;
+    }
+
+    .loginCard h1 {
+        font-size: 21px;
     }
 
     .coilViewer {

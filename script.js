@@ -6,6 +6,7 @@ const nomeInput = document.getElementById("nomeUsuarioInput")
 const idiomaSelect = document.getElementById("idiomaSelect")
 const entrar = document.getElementById("entrarBtn")
 const resetBtn = document.getElementById("resetUser")
+const nomeErro = document.getElementById("nomeErro")
 
 let nome = localStorage.getItem("nomeUsuario")
 let idioma = localStorage.getItem("idiomaUsuario") || "pt"
@@ -25,13 +26,26 @@ function showMain(){
 if(nome){
     showMain()
 }else{
-    entrar.onclick = ()=>{
-        nome = nomeInput.value
+    function entrarNoApp(){
+        nome = nomeInput.value.trim()
+        if(!nome){
+            nomeInput.parentElement.classList.add("erro")
+            nomeErro.innerText = "Digite um nome para continuar."
+            nomeInput.focus()
+            return
+        }
         idioma = idiomaSelect.value
         localStorage.setItem("nomeUsuario", nome)
         localStorage.setItem("idiomaUsuario", idioma)
         showMain()
     }
+    entrar.onclick = entrarNoApp
+    nomeInput.addEventListener("input", ()=>{
+        nomeInput.parentElement.classList.remove("erro")
+    })
+    nomeInput.addEventListener("keydown", (event)=>{
+        if(event.key === "Enter") entrarNoApp()
+    })
 }
 
 // botão trocar usuário
