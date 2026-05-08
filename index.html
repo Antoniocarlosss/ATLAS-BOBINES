@@ -62,7 +62,18 @@ gtag('config', 'G-J6VCHDN4X2');
         <h3 id="labelVisual3d">Visual 3D da bobina</h3>
         <button id="toggleVisual3d" type="button">Ocultar</button>
     </div>
-    <div id="coilViewer" class="coilViewer" aria-label="Visualizacao 3D da bobina desenrolando"></div>
+    <div id="coilViewer" class="coilViewer fotoRealViewer" aria-label="Imagem completa da maquina com bobina traseira animada">
+        <div class="fotoAviso" id="fotoAviso">Coloque a foto da maquina na pasta com o nome maquina.jpg</div>
+        <div class="bobinaAnimada" id="bobinaAnimada" aria-hidden="true">
+            <div class="anelExterno"></div>
+            <div class="mioloBobina"></div>
+            <div class="garraBobina garraA"></div>
+            <div class="garraBobina garraB"></div>
+            <div class="garraBobina garraC"></div>
+            <div class="eixoBobina"></div>
+        </div>
+        <div class="folhaSaindo" id="folhaSaindo" aria-hidden="true"></div>
+    </div>
     <div class="visual3dInfo">
         <span id="visualMetros">0 m</span>
         <span id="visualVelocidade">0 m/min</span>
@@ -72,7 +83,6 @@ gtag('config', 'G-J6VCHDN4X2');
 
 <button id="resetUser">Trocar usuário</button>
 
-<script src="https://unpkg.com/three@0.148.0/build/three.min.js"></script>
 <script src="script.js"></script>
 </div>
 </body>
