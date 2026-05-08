@@ -147,7 +147,7 @@ button:hover {
 }
 
 .bobinaAnimadaSvg {
-    animation: girarBobina 2.8s linear infinite;
+    animation: girarBobinaReversa 2.8s linear infinite;
     transform-box: fill-box;
     transform-origin: center;
 }
@@ -164,6 +164,15 @@ button:hover {
     }
     to {
         transform: rotate(360deg);
+    }
+}
+
+@keyframes girarBobinaReversa {
+    from {
+        transform: rotate(360deg);
+    }
+    to {
+        transform: rotate(0deg);
     }
 }
 
