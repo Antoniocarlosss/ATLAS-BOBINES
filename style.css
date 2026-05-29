@@ -12,6 +12,19 @@ body {
     width: 100%;
 }
 
+.mainPanel {
+    padding-top: 24px;
+}
+
+.saudacao {
+    margin: 0 auto 22px;
+    max-width: 420px;
+    text-align: center;
+    color: #ffffff;
+    font-size: 18px;
+    line-height: 1.35;
+}
+
 .calculatorChoice {
     display: grid;
     gap: 12px;
@@ -22,8 +35,8 @@ body {
     display: block;
     width: 100%;
     margin: 0;
-    padding: 18px;
-    text-align: left;
+    padding: 20px 18px;
+    text-align: center;
     background: #111722;
     border: 1px solid rgba(0,224,255,0.32);
     border-radius: 8px;
@@ -41,7 +54,7 @@ body {
 
 .choiceCard strong {
     color: #00e0ff;
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .choiceCard span {
@@ -198,7 +211,8 @@ body {
 h2 {
     text-align: center;
     color: #00e0ff;
-    font-size: 20px;
+    font-size: 24px;
+    margin: 26px 0 20px;
 }
 
 label {
@@ -286,114 +300,6 @@ button:hover {
     box-shadow: 0 0 0 2px white;
 }
 
-.visual3dPanel {
-    margin-top: 18px;
-    padding: 12px;
-    background: #141824;
-    border: 1px solid rgba(0,224,255,0.35);
-    border-radius: 8px;
-    box-sizing: border-box;
-}
-
-.visual3dHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.visual3dHeader h3 {
-    margin: 0;
-    color: #00e0ff;
-    font-size: 17px;
-}
-
-.visual3dHeader button {
-    width: auto;
-    min-width: 86px;
-    margin: 0;
-    padding: 7px 10px;
-    font-size: 14px;
-    background: #2d3f5f;
-}
-
-.coilViewer {
-    position: relative;
-    width: 100%;
-    height: 310px;
-    margin-top: 12px;
-    overflow: hidden;
-    background: #161b22;
-    border-radius: 8px;
-}
-
-.machineSvg {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
-
-.bobinaAnimadaSvg {
-    animation: girarBobinaReversa 2.8s linear infinite;
-    transform-box: fill-box;
-    transform-origin: center;
-}
-
-.folhaSaindoSvg {
-    animation: puxarFolha 1s ease-in-out infinite alternate;
-    transform-box: fill-box;
-    transform-origin: left center;
-}
-
-@keyframes girarBobina {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes girarBobinaReversa {
-    from {
-        transform: rotate(360deg);
-    }
-    to {
-        transform: rotate(0deg);
-    }
-}
-
-@keyframes puxarFolha {
-    from {
-        transform: translateX(-4px);
-    }
-    to {
-        transform: translateX(12px);
-    }
-}
-
-.visual3dInfo {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 10px;
-}
-
-.visual3dInfo span {
-    min-width: 0;
-    padding: 7px 6px;
-    background: #0d111a;
-    border-radius: 6px;
-    color: #dceeff;
-    font-size: 13px;
-    text-align: center;
-}
-
-.visual3dPanel.recolhido .coilViewer,
-.visual3dPanel.recolhido .visual3dInfo {
-    display: none;
-}
-
 @media (max-width: 420px) {
     body {
         padding: 12px;
@@ -411,11 +317,7 @@ button:hover {
         font-size: 21px;
     }
 
-    .coilViewer {
-        height: 250px;
-    }
-
-    .visual3dInfo {
-        grid-template-columns: 1fr;
+    .choiceCard strong {
+        font-size: 18px;
     }
 }

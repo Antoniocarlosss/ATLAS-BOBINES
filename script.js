@@ -187,16 +187,6 @@ function start(){
         if(v === agroVelSel) b.classList.add("selecionado")
     })
 
-    const visual3d = criarVisual3d()
-    const visualPanel = document.getElementById("visual3dPanel")
-    const toggleVisual = document.getElementById("toggleVisual3d")
-    toggleVisual.innerText = t.ocultar
-    toggleVisual.onclick = ()=>{
-        visualPanel.classList.toggle("recolhido")
-        toggleVisual.innerText = visualPanel.classList.contains("recolhido") ? t.mostrar : t.ocultar
-        visual3d.resize()
-    }
-
     function calc(){
         const interno=500
         const pi=3.14
@@ -215,10 +205,6 @@ function start(){
         document.getElementById("metros").innerText = t.falta + metros + " metros"
         document.getElementById("tempo").innerText = t.tempo + textoTempo
         document.getElementById("hora").innerText = t.acaba + fim.toLocaleTimeString()
-        document.getElementById("visualMetros").innerText = metros + " m"
-        document.getElementById("visualVelocidade").innerText = velSel + " m/min"
-        document.getElementById("visualEspessura").innerText = espSel + " mm"
-        visual3d.update({larguraCm:largura_cm, espessura:espSel, velocidade:velSel, metros})
     }
 
     function calcAgropainel(){
@@ -242,20 +228,6 @@ function start(){
         document.getElementById("agroHora").innerText = t.acaba + fim.toLocaleTimeString()
     }
 
-    function criarVisual3d(){
-        const bobina = document.getElementById("bobinaAnimadaSvg")
-        const folha = document.getElementById("folhaSaindoSvg")
-
-        function update(next){
-            const segundosPorVolta = Math.max(0.8, 4.8 - (next.velocidade * 0.28))
-            const largura = Math.min(1.12, Math.max(0.88, next.larguraCm / 14))
-            bobina.style.animationDuration = segundosPorVolta + "s"
-            folha.style.animationDuration = Math.max(0.45, segundosPorVolta / 2.4) + "s"
-            folha.style.transform = "scaleY(" + largura + ")"
-        }
-
-        return {update, resize(){}}
-    }
     calc()
     mostrarEscolha()
 }
