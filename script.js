@@ -19,9 +19,9 @@ let nome = localStorage.getItem("nomeUsuario")
 let idioma = localStorage.getItem("idiomaUsuario") || "pt"
 
 const textos = {
-    pt:{titulo:"Calculadora de Bobina",largura:"Largura da bobina externa (cm)",espessura:"Espessura da chapa (mm)",velocidade:"Velocidade da máquina (m/min)",falta:"Falta para acabar: ",tempo:"Falta ",acaba:"Provavelmente acaba às: ",trocar:"Trocar usuário",primeiro:"Primeiro acesso",visual:"Visual 3D da bobina",ocultar:"Ocultar",mostrar:"Mostrar"},
-    en:{titulo:"Coil Calculator",largura:"Width",espessura:"Thickness",velocidade:"Speed",falta:"Remaining: ",tempo:"Remaining ",acaba:"Finish at: ",trocar:"Change user",primeiro:"First access",visual:"3D coil view",ocultar:"Hide",mostrar:"Show"},
-    hi:{titulo:"कॉइल कैलकुलेटर",largura:"चौड़ाई",espessura:"मोटाई",velocidade:"गति",falta:"बाकी: ",tempo:"बाकी ",acaba:"समाप्त: ",trocar:"यूज़र बदलें",primeiro:"पहली बार",visual:"3D कॉइल दृश्य",ocultar:"छिपाएं",mostrar:"दिखाएं"}
+    pt:{titulo:"Calculadora de Bobina",largura:"Largura da bobina externa (cm)",espessura:"Espessura da chapa (mm)",velocidade:"Velocidade da máquina (m/min)",falta:"Falta para acabar: ",tempo:"Falta ",acaba:"Provavelmente acaba às: ",trocar:"Trocar usuário",primeiro:"Primeiro acesso"},
+    en:{titulo:"Coil Calculator",largura:"Width",espessura:"Thickness",velocidade:"Speed",falta:"Remaining: ",tempo:"Remaining ",acaba:"Finish at: ",trocar:"Change user",primeiro:"First access"},
+    hi:{titulo:"कॉइल कैलकुलेटर",largura:"चौड़ाई",espessura:"मोटाई",velocidade:"गति",falta:"बाकी: ",tempo:"बाकी ",acaba:"समाप्त: ",trocar:"यूज़र बदलें",primeiro:"पहली बार"}
 }
 
 function showMain(){
@@ -69,7 +69,6 @@ function start(){
     document.getElementById("labelLargura").innerText = t.largura
     document.getElementById("labelEspessura").innerText = t.espessura
     document.getElementById("labelVelocidade").innerText = t.velocidade
-    document.getElementById("labelVisual3d").innerText = t.visual
     resetBtn.innerText = t.trocar
 
     function mostrarEscolha(){

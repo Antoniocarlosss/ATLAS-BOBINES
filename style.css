@@ -28,14 +28,19 @@ body {
 .calculatorChoice {
     display: grid;
     gap: 12px;
-    margin: 18px 0;
+    margin: 18px auto;
+    max-width: 620px;
 }
 
 .choiceCard {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
+    min-height: 104px;
     margin: 0;
-    padding: 20px 18px;
+    padding: 22px 18px;
     text-align: center;
     background: #111722;
     border: 1px solid rgba(0,224,255,0.32);
@@ -50,6 +55,8 @@ body {
 .choiceCard strong,
 .choiceCard span {
     display: block;
+    width: 100%;
+    text-align: center;
 }
 
 .choiceCard strong {
