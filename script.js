@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", ()=>{
+﻿document.addEventListener("DOMContentLoaded", ()=>{
 
 const welcome = document.getElementById("welcomeScreen")
 const mainPanel = document.getElementById("mainPanel")
@@ -14,14 +14,25 @@ const abrirBobinaBtn = document.getElementById("abrirBobinaBtn")
 const abrirAgropainelBtn = document.getElementById("abrirAgropainelBtn")
 const voltarBobinaBtn = document.getElementById("voltarBobinaBtn")
 const voltarAgropainelBtn = document.getElementById("voltarAgropainelBtn")
+const idiomaAtualSelect = document.getElementById("idiomaAtualSelect")
+const labelIdiomaAtual = document.getElementById("labelIdiomaAtual")
 
 let nome = localStorage.getItem("nomeUsuario")
 let idioma = localStorage.getItem("idiomaUsuario") || "pt"
 
 const textos = {
-    pt:{titulo:"Calculadora de Bobina",largura:"Largura da bobina externa (cm)",espessura:"Espessura da chapa (mm)",velocidade:"Velocidade da máquina (m/min)",falta:"Falta para acabar: ",tempo:"Falta ",acaba:"Provavelmente acaba às: ",trocar:"Trocar usuário",primeiro:"Primeiro acesso"},
-    en:{titulo:"Coil Calculator",largura:"Width",espessura:"Thickness",velocidade:"Speed",falta:"Remaining: ",tempo:"Remaining ",acaba:"Finish at: ",trocar:"Change user",primeiro:"First access"},
-    hi:{titulo:"कॉइल कैलकुलेटर",largura:"चौड़ाई",espessura:"मोटाई",velocidade:"गति",falta:"बाकी: ",tempo:"बाकी ",acaba:"समाप्त: ",trocar:"यूज़र बदलें",primeiro:"पहली बार"}
+    pt:{escolha:"Escolha a calculadora",titulo:"Calculadora de Bobina",bobina:"Calculadora Bobina",bobinaSub:"CÃ¡lculo padrÃ£o de bobinas",agro:"Calculadora Agropainel",agroSub:"Espessura fixa 0.60 mm | Interno 200",idioma:"Idioma",largura:"Largura da bobina externa (cm)",agroLargura:"Largura da aba (cm)",espessura:"Espessura da chapa (mm)",velocidade:"Velocidade da mÃ¡quina (m/min)",falta:"Falta para acabar: ",tempo:"Falta ",acaba:"Provavelmente acaba Ã s: ",trocar:"Trocar usuÃ¡rio",voltar:"Voltar para opÃ§Ãµes",primeiro:"Primeiro acesso",bomDia:"Bom dia",boaTarde:"Boa tarde",boaNoite:"Boa noite",ultimo:"Ãšltimo acesso"},
+    en:{escolha:"Choose the calculator",titulo:"Coil Calculator",bobina:"Coil Calculator",bobinaSub:"Standard coil calculation",agro:"Agropanel Calculator",agroSub:"Fixed thickness 0.60 mm | Core 200",idioma:"Language",largura:"Outer coil width (cm)",agroLargura:"Flap width (cm)",espessura:"Sheet thickness (mm)",velocidade:"Machine speed (m/min)",falta:"Remaining: ",tempo:"Time left ",acaba:"Probably finishes at: ",trocar:"Change user",voltar:"Back to options",primeiro:"First access",bomDia:"Good morning",boaTarde:"Good afternoon",boaNoite:"Good evening",ultimo:"Last access"},
+    hi:{escolha:"à¤•à¥ˆà¤²à¤•à¥à¤²à¥‡à¤Ÿà¤° à¤šà¥à¤¨à¥‡à¤‚",titulo:"à¤•à¥‰à¤‡à¤² à¤•à¥ˆà¤²à¤•à¥à¤²à¥‡à¤Ÿà¤°",bobina:"à¤•à¥‰à¤‡à¤² à¤•à¥ˆà¤²à¤•à¥à¤²à¥‡à¤Ÿà¤°",bobinaSub:"à¤®à¤¾à¤¨à¤• à¤•à¥‰à¤‡à¤² à¤—à¤£à¤¨à¤¾",agro:"à¤à¤—à¥à¤°à¥‹à¤ªà¥ˆà¤¨à¤² à¤•à¥ˆà¤²à¤•à¥à¤²à¥‡à¤Ÿà¤°",agroSub:"à¤¨à¤¿à¤¶à¥à¤šà¤¿à¤¤ à¤®à¥‹à¤Ÿà¤¾à¤ˆ 0.60 mm | à¤…à¤‚à¤¦à¤° 200",idioma:"à¤­à¤¾à¤·à¤¾",largura:"à¤¬à¤¾à¤¹à¤°à¥€ à¤•à¥‰à¤‡à¤² à¤šà¥Œà¤¡à¤¼à¤¾à¤ˆ (cm)",agroLargura:"à¤«à¥à¤²à¥ˆà¤ª à¤šà¥Œà¤¡à¤¼à¤¾à¤ˆ (cm)",espessura:"à¤¶à¥€à¤Ÿ à¤®à¥‹à¤Ÿà¤¾à¤ˆ (mm)",velocidade:"à¤®à¤¶à¥€à¤¨ à¤—à¤¤à¤¿ (m/min)",falta:"à¤¬à¤¾à¤•à¥€: ",tempo:"à¤¸à¤®à¤¯ à¤¬à¤¾à¤•à¥€ ",acaba:"à¤¸à¤‚à¤­à¤¾à¤µà¤¿à¤¤ à¤¸à¤®à¤¾à¤ªà¥à¤¤à¤¿: ",trocar:"à¤¯à¥‚à¤œà¤¼à¤° à¤¬à¤¦à¤²à¥‡à¤‚",voltar:"à¤µà¤¿à¤•à¤²à¥à¤ªà¥‹à¤‚ à¤ªà¤° à¤µà¤¾à¤ªà¤¸",primeiro:"à¤ªà¤¹à¤²à¥€ à¤¬à¤¾à¤°",bomDia:"à¤¸à¥à¤ªà¥à¤°à¤­à¤¾à¤¤",boaTarde:"à¤¨à¤®à¤¸à¥à¤•à¤¾à¤°",boaNoite:"à¤¶à¥à¤­ à¤°à¤¾à¤¤à¥à¤°à¤¿",ultimo:"à¤…à¤‚à¤¤à¤¿à¤® à¤ªà¥à¤°à¤µà¥‡à¤¶"},
+    bn:{escolha:"à¦•à§à¦¯à¦¾à¦²à¦•à§à¦²à§‡à¦Ÿà¦° à¦¬à§‡à¦›à§‡ à¦¨à¦¿à¦¨",titulo:"à¦•à§Ÿà§‡à¦² à¦•à§à¦¯à¦¾à¦²à¦•à§à¦²à§‡à¦Ÿà¦°",bobina:"à¦•à§Ÿà§‡à¦² à¦•à§à¦¯à¦¾à¦²à¦•à§à¦²à§‡à¦Ÿà¦°",bobinaSub:"à¦¸à§à¦Ÿà§à¦¯à¦¾à¦¨à§à¦¡à¦¾à¦°à§à¦¡ à¦•à§Ÿà§‡à¦² à¦—à¦£à¦¨à¦¾",agro:"à¦…à§à¦¯à¦¾à¦—à§à¦°à§‹à¦ªà§à¦¯à¦¾à¦¨à§‡à¦² à¦•à§à¦¯à¦¾à¦²à¦•à§à¦²à§‡à¦Ÿà¦°",agroSub:"à¦¸à§à¦¥à¦¿à¦° à¦ªà§à¦°à§à¦¤à§à¦¬ 0.60 mm | à¦­à¦¿à¦¤à¦° 200",idioma:"à¦­à¦¾à¦·à¦¾",largura:"à¦¬à¦¾à¦‡à¦°à§‡à¦° à¦•à§Ÿà§‡à¦² à¦ªà§à¦°à¦¸à§à¦¥ (cm)",agroLargura:"à¦«à§à¦²à§à¦¯à¦¾à¦ª à¦ªà§à¦°à¦¸à§à¦¥ (cm)",espessura:"à¦¶à¦¿à¦Ÿà§‡à¦° à¦ªà§à¦°à§à¦¤à§à¦¬ (mm)",velocidade:"à¦®à§‡à¦¶à¦¿à¦¨à§‡à¦° à¦—à¦¤à¦¿ (m/min)",falta:"à¦¬à¦¾à¦•à¦¿: ",tempo:"à¦¸à¦®à§Ÿ à¦¬à¦¾à¦•à¦¿ ",acaba:"à¦¸à¦®à§à¦­à¦¬à¦¤ à¦¶à§‡à¦· à¦¹à¦¬à§‡: ",trocar:"à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦°à¦•à¦¾à¦°à§€ à¦¬à¦¦à¦²à¦¾à¦¨",voltar:"à¦¬à¦¿à¦•à¦²à§à¦ªà§‡ à¦«à¦¿à¦°à§à¦¨",primeiro:"à¦ªà§à¦°à¦¥à¦® à¦ªà§à¦°à¦¬à§‡à¦¶",bomDia:"à¦¸à§à¦ªà§à¦°à¦­à¦¾à¦¤",boaTarde:"à¦¶à§à¦­ à¦…à¦ªà¦°à¦¾à¦¹à§à¦¨",boaNoite:"à¦¶à§à¦­ à¦°à¦¾à¦¤à§à¦°à¦¿",ultimo:"à¦¶à§‡à¦· à¦ªà§à¦°à¦¬à§‡à¦¶"},
+    te:{escolha:"à°•à°¾à°²à±à°•à±à°¯à±à°²à±‡à°Ÿà°°à± à°Žà°‚à°šà±à°•à±‹à°‚à°¡à°¿",titulo:"à°•à°¾à°¯à°¿à°²à± à°•à°¾à°²à±à°•à±à°¯à±à°²à±‡à°Ÿà°°à±",bobina:"à°•à°¾à°¯à°¿à°²à± à°•à°¾à°²à±à°•à±à°¯à±à°²à±‡à°Ÿà°°à±",bobinaSub:"à°ªà±à°°à°¾à°®à°¾à°£à°¿à°• à°•à°¾à°¯à°¿à°²à± à°²à±†à°•à±à°•à°¿à°‚à°ªà±",agro:"à°…à°—à±à°°à±‹à°ªà±à°¯à°¾à°¨à±†à°²à± à°•à°¾à°²à±à°•à±à°¯à±à°²à±‡à°Ÿà°°à±",agroSub:"à°¸à±à°¥à°¿à°° à°®à°‚à°¦à°‚ 0.60 mm | à°²à±‹à°ªà°²à°¿ 200",idioma:"à°­à°¾à°·",largura:"à°¬à°¯à°Ÿà°¿ à°•à°¾à°¯à°¿à°²à± à°µà±†à°¡à°²à±à°ªà± (cm)",agroLargura:"à°«à±à°²à°¾à°ªà± à°µà±†à°¡à°²à±à°ªà± (cm)",espessura:"à°·à±€à°Ÿà± à°®à°‚à°¦à°‚ (mm)",velocidade:"à°¯à°‚à°¤à±à°° à°µà±‡à°—à°‚ (m/min)",falta:"à°®à°¿à°—à°¿à°²à°¿à°‚à°¦à°¿: ",tempo:"à°®à°¿à°—à°¿à°²à°¿à°¨ à°¸à°®à°¯à°‚ ",acaba:"à°…à°‚à°šà°¨à°¾ à°®à±à°—à°¿à°‚à°ªà±: ",trocar:"à°µà°¿à°¨à°¿à°¯à±‹à°—à°¦à°¾à°°à± à°®à°¾à°°à±à°šà°‚à°¡à°¿",voltar:"à°Žà°‚à°ªà°¿à°•à°²à°•à± à°¤à°¿à°°à°¿à°—à°¿",primeiro:"à°®à±Šà°¦à°Ÿà°¿ à°ªà±à°°à°µà±‡à°¶à°‚",bomDia:"à°¶à±à°­à±‹à°¦à°¯à°‚",boaTarde:"à°¶à±à°­ à°®à°§à±à°¯à°¾à°¹à±à°¨à°‚",boaNoite:"à°¶à±à°­ à°°à°¾à°¤à±à°°à°¿",ultimo:"à°šà°¿à°µà°°à°¿ à°ªà±à°°à°µà±‡à°¶à°‚"},
+    mr:{escolha:"à¤•à¥…à¤²à¥à¤•à¥à¤¯à¥à¤²à¥‡à¤Ÿà¤° à¤¨à¤¿à¤µà¤¡à¤¾",titulo:"à¤•à¥‰à¤‡à¤² à¤•à¥…à¤²à¥à¤•à¥à¤¯à¥à¤²à¥‡à¤Ÿà¤°",bobina:"à¤•à¥‰à¤‡à¤² à¤•à¥…à¤²à¥à¤•à¥à¤¯à¥à¤²à¥‡à¤Ÿà¤°",bobinaSub:"à¤®à¤¾à¤¨à¤• à¤•à¥‰à¤‡à¤² à¤—à¤£à¤¨à¤¾",agro:"à¤…à¥…à¤—à¥à¤°à¥‹à¤ªà¥…à¤¨à¥‡à¤² à¤•à¥…à¤²à¥à¤•à¥à¤¯à¥à¤²à¥‡à¤Ÿà¤°",agroSub:"à¤¨à¤¿à¤¶à¥à¤šà¤¿à¤¤ à¤œà¤¾à¤¡à¥€ 0.60 mm | à¤†à¤¤ 200",idioma:"à¤­à¤¾à¤·à¤¾",largura:"à¤¬à¤¾à¤¹à¥‡à¤°à¥€à¤² à¤•à¥‰à¤‡à¤² à¤°à¥à¤‚à¤¦à¥€ (cm)",agroLargura:"à¤«à¥à¤²à¥…à¤ª à¤°à¥à¤‚à¤¦à¥€ (cm)",espessura:"à¤¶à¥€à¤Ÿ à¤œà¤¾à¤¡à¥€ (mm)",velocidade:"à¤®à¤¶à¥€à¤¨ à¤µà¥‡à¤— (m/min)",falta:"à¤¬à¤¾à¤•à¥€: ",tempo:"à¤‰à¤°à¤²à¥‡à¤²à¤¾ à¤µà¥‡à¤³ ",acaba:"à¤¬à¤¹à¥à¤§à¤¾ à¤¸à¤®à¤¾à¤ªà¥à¤¤: ",trocar:"à¤µà¤¾à¤ªà¤°à¤•à¤°à¥à¤¤à¤¾ à¤¬à¤¦à¤²à¤¾",voltar:"à¤ªà¤°à¥à¤¯à¤¾à¤¯à¤¾à¤‚à¤µà¤° à¤ªà¤°à¤¤",primeiro:"à¤ªà¤¹à¤¿à¤²à¤¾ à¤ªà¥à¤°à¤µà¥‡à¤¶",bomDia:"à¤¶à¥à¤­ à¤ªà¥à¤°à¤­à¤¾à¤¤",boaTarde:"à¤¶à¥à¤­ à¤¦à¥à¤ªà¤¾à¤°",boaNoite:"à¤¶à¥à¤­ à¤°à¤¾à¤¤à¥à¤°à¥€",ultimo:"à¤¶à¥‡à¤µà¤Ÿà¤šà¤¾ à¤ªà¥à¤°à¤µà¥‡à¤¶"},
+    ta:{escolha:"à®•à®£à®¿à®ªà¯à®ªà®¾à®©à¯ à®¤à¯‡à®°à¯à®µà¯",titulo:"à®•à®¾à®¯à®¿à®²à¯ à®•à®£à®¿à®ªà¯à®ªà®¾à®©à¯",bobina:"à®•à®¾à®¯à®¿à®²à¯ à®•à®£à®¿à®ªà¯à®ªà®¾à®©à¯",bobinaSub:"à®¨à®¿à®²à¯ˆà®¯à®¾à®© à®•à®¾à®¯à®¿à®²à¯ à®•à®£à®•à¯à®•à¯",agro:"à®…à®•à¯à®°à¯‹à®ªà¯‡à®©à®²à¯ à®•à®£à®¿à®ªà¯à®ªà®¾à®©à¯",agroSub:"à®¨à®¿à®²à¯ˆà®¯à®¾à®© à®¤à®Ÿà®¿à®®à®©à¯ 0.60 mm | à®‰à®³à¯à®³à¯‡ 200",idioma:"à®®à¯Šà®´à®¿",largura:"à®µà¯†à®³à®¿à®ªà¯à®ªà¯à®± à®•à®¾à®¯à®¿à®²à¯ à®…à®•à®²à®®à¯ (cm)",agroLargura:"à®ƒà®ªà®¿à®³à®¾à®ªà¯ à®…à®•à®²à®®à¯ (cm)",espessura:"à®¤à®¾à®³à¯ à®¤à®Ÿà®¿à®®à®©à¯ (mm)",velocidade:"à®‡à®¯à®¨à¯à®¤à®¿à®° à®µà¯‡à®•à®®à¯ (m/min)",falta:"à®®à¯€à®¤à®®à¯: ",tempo:"à®®à¯€à®¤à®®à¯à®³à¯à®³ à®¨à¯‡à®°à®®à¯ ",acaba:"à®®à¯à®Ÿà®¿à®¯à¯à®®à¯ à®¨à¯‡à®°à®®à¯: ",trocar:"à®ªà®¯à®©à®°à¯ à®®à®¾à®±à¯à®±à¯",voltar:"à®µà®¿à®°à¯à®ªà¯à®ªà®™à¯à®•à®³à¯à®•à¯à®•à¯ à®¤à®¿à®°à¯à®®à¯à®ªà¯",primeiro:"à®®à¯à®¤à®²à¯ à®…à®£à¯à®•à®²à¯",bomDia:"à®•à®¾à®²à¯ˆ à®µà®£à®•à¯à®•à®®à¯",boaTarde:"à®®à®¤à®¿à®¯ à®µà®£à®•à¯à®•à®®à¯",boaNoite:"à®‡à®°à®µà¯ à®µà®£à®•à¯à®•à®®à¯",ultimo:"à®•à®Ÿà¯ˆà®šà®¿ à®…à®£à¯à®•à®²à¯"},
+    ur:{escolha:"Ú©ÛŒÙ„Ú©ÙˆÙ„ÛŒÙ¹Ø± Ù…Ù†ØªØ®Ø¨ Ú©Ø±ÛŒÚº",titulo:"Ú©ÙˆØ§Ø¦Ù„ Ú©ÛŒÙ„Ú©ÙˆÙ„ÛŒÙ¹Ø±",bobina:"Ú©ÙˆØ§Ø¦Ù„ Ú©ÛŒÙ„Ú©ÙˆÙ„ÛŒÙ¹Ø±",bobinaSub:"Ù…Ø¹ÛŒØ§Ø±ÛŒ Ú©ÙˆØ§Ø¦Ù„ Ø­Ø³Ø§Ø¨",agro:"Ø§ÛŒÚ¯Ø±Ùˆ Ù¾ÛŒÙ†Ù„ Ú©ÛŒÙ„Ú©ÙˆÙ„ÛŒÙ¹Ø±",agroSub:"Ù…Ù‚Ø±Ø±Û Ù…ÙˆÙ¹Ø§Ø¦ÛŒ 0.60 mm | Ø§Ù†Ø¯Ø± 200",idioma:"Ø²Ø¨Ø§Ù†",largura:"Ø¨ÛŒØ±ÙˆÙ†ÛŒ Ú©ÙˆØ§Ø¦Ù„ Ú†ÙˆÚ‘Ø§Ø¦ÛŒ (cm)",agroLargura:"ÙÙ„ÛŒÙ¾ Ú†ÙˆÚ‘Ø§Ø¦ÛŒ (cm)",espessura:"Ø´ÛŒÙ¹ Ù…ÙˆÙ¹Ø§Ø¦ÛŒ (mm)",velocidade:"Ù…Ø´ÛŒÙ† Ø±ÙØªØ§Ø± (m/min)",falta:"Ø¨Ø§Ù‚ÛŒ: ",tempo:"ÙˆÙ‚Øª Ø¨Ø§Ù‚ÛŒ ",acaba:"Ù…Ù…Ú©Ù†Û Ø§Ø®ØªØªØ§Ù…: ",trocar:"ØµØ§Ø±Ù ØªØ¨Ø¯ÛŒÙ„ Ú©Ø±ÛŒÚº",voltar:"Ø§Ø®ØªÛŒØ§Ø±Ø§Øª Ù¾Ø± ÙˆØ§Ù¾Ø³",primeiro:"Ù¾ÛÙ„ÛŒ Ø±Ø³Ø§Ø¦ÛŒ",bomDia:"ØµØ¨Ø­ Ø¨Ø®ÛŒØ±",boaTarde:"Ø¢Ø¯Ø§Ø¨",boaNoite:"Ø´Ø¨ Ø¨Ø®ÛŒØ±",ultimo:"Ø¢Ø®Ø±ÛŒ Ø±Ø³Ø§Ø¦ÛŒ"},
+    gu:{escolha:"àª•à«‡àª²à«àª•à«àª¯à«àª²à«‡àªŸàª° àªªàª¸àª‚àª¦ àª•àª°à«‹",titulo:"àª•à«‹àª‡àª² àª•à«‡àª²à«àª•à«àª¯à«àª²à«‡àªŸàª°",bobina:"àª•à«‹àª‡àª² àª•à«‡àª²à«àª•à«àª¯à«àª²à«‡àªŸàª°",bobinaSub:"àªªà«àª°àª®àª¾àª£àª­à«‚àª¤ àª•à«‹àª‡àª² àª—àª£àª¤àª°à«€",agro:"àªàª—à«àª°à«‹àªªà«‡àª¨àª² àª•à«‡àª²à«àª•à«àª¯à«àª²à«‡àªŸàª°",agroSub:"àª¨àª¿àª¶à«àªšàª¿àª¤ àªœàª¾àª¡àª¾àªˆ 0.60 mm | àª…àª‚àª¦àª° 200",idioma:"àª­àª¾àª·àª¾",largura:"àª¬àª¾àª¹à«àª¯ àª•à«‹àª‡àª² àªªàª¹à«‹àª³àª¾àªˆ (cm)",agroLargura:"àª«à«àª²à«‡àªª àªªàª¹à«‹àª³àª¾àªˆ (cm)",espessura:"àª¶à«€àªŸ àªœàª¾àª¡àª¾àªˆ (mm)",velocidade:"àª®àª¶à«€àª¨ àª—àª¤àª¿ (m/min)",falta:"àª¬àª¾àª•à«€: ",tempo:"àª¬àª¾àª•à«€ àª¸àª®àª¯ ",acaba:"àª¸àª‚àª­àªµàª¿àª¤ àª…àª‚àª¤: ",trocar:"àªµàªªàª°àª¾àª¶àª•àª°à«àª¤àª¾ àª¬àª¦àª²à«‹",voltar:"àªµàª¿àª•àª²à«àªªà«‹ àªªàª° àªªàª¾àª›àª¾",primeiro:"àªªà«àª°àª¥àª® àªªà«àª°àªµà«‡àª¶",bomDia:"àª¸à«àªªà«àª°àª­àª¾àª¤",boaTarde:"àª¶à«àª­ àª¬àªªà«‹àª°",boaNoite:"àª¶à«àª­ àª°àª¾àª¤à«àª°àª¿",ultimo:"àª›à«‡àª²à«àª²à«‹ àªªà«àª°àªµà«‡àª¶"},
+    kn:{escolha:"à²•à³à²¯à²¾à²²à³à²•à³à²²à³‡à²Ÿà²°à³ à²†à²¯à³à²•à³†à²®à²¾à²¡à²¿",titulo:"à²•à²¾à²¯à²¿à²²à³ à²•à³à²¯à²¾à²²à³à²•à³à²²à³‡à²Ÿà²°à³",bobina:"à²•à²¾à²¯à²¿à²²à³ à²•à³à²¯à²¾à²²à³à²•à³à²²à³‡à²Ÿà²°à³",bobinaSub:"à²ªà³à²°à²®à²¾à²£à²¿à²¤ à²•à²¾à²¯à²¿à²²à³ à²²à³†à²•à³à²•à²¾à²šà²¾à²°",agro:"à²…à²—à³à²°à³‹à²ªà³à²¯à²¾à²¨à²²à³ à²•à³à²¯à²¾à²²à³à²•à³à²²à³‡à²Ÿà²°à³",agroSub:"à²¸à³à²¥à²¿à²° à²¦à²ªà³à²ª 0.60 mm | à²’à²³à²—à³† 200",idioma:"à²­à²¾à²·à³†",largura:"à²¹à³Šà²°à²—à²¿à²¨ à²•à²¾à²¯à²¿à²²à³ à²…à²—à²² (cm)",agroLargura:"à²«à³à²²à²¾à²ªà³ à²…à²—à²² (cm)",espessura:"à²¶à³€à²Ÿà³ à²¦à²ªà³à²ª (mm)",velocidade:"à²¯à²‚à²¤à³à²° à²µà³‡à²— (m/min)",falta:"à²¬à²¾à²•à²¿: ",tempo:"à²¬à²¾à²•à²¿ à²¸à²®à²¯ ",acaba:"à²¬à²¹à³à²¶à²ƒ à²®à³à²—à²¿à²¯à³à²µ à²¸à²®à²¯: ",trocar:"à²¬à²³à²•à³†à²¦à²¾à²° à²¬à²¦à²²à²¿à²¸à²¿",voltar:"à²†à²¯à³à²•à³†à²—à²³à²¿à²—à³† à²¹à²¿à²‚à²¦à²¿à²°à³à²—à²¿",primeiro:"à²®à³Šà²¦à²² à²ªà³à²°à²µà³‡à²¶",bomDia:"à²¶à³à²­à³‹à²¦à²¯",boaTarde:"à²¶à³à²­ à²®à²§à³à²¯à²¾à²¹à³à²¨",boaNoite:"à²¶à³à²­ à²°à²¾à²¤à³à²°à²¿",ultimo:"à²•à³Šà²¨à³†à²¯ à²ªà³à²°à²µà³‡à²¶"},
+    ml:{escolha:"à´•à´¾àµ½à´•àµà´•àµà´²àµ‡à´±àµà´±àµ¼ à´¤à´¿à´°à´žàµà´žàµ†à´Ÿàµà´•àµà´•àµà´•",titulo:"à´•àµ‹à´¯à´¿àµ½ à´•à´¾àµ½à´•àµà´•àµà´²àµ‡à´±àµà´±àµ¼",bobina:"à´•àµ‹à´¯à´¿àµ½ à´•à´¾àµ½à´•àµà´•àµà´²àµ‡à´±àµà´±àµ¼",bobinaSub:"à´¸àµà´±àµà´±à´¾àµ»à´¡àµ‡àµ¼à´¡àµ à´•àµ‹à´¯à´¿àµ½ à´•à´£à´•àµà´•àµà´•àµ‚à´Ÿàµà´Ÿàµ½",agro:"à´…à´—àµà´°àµ‹à´ªà´¾à´¨àµ½ à´•à´¾àµ½à´•àµà´•àµà´²àµ‡à´±àµà´±àµ¼",agroSub:"à´¸àµà´¥à´¿à´° à´•à´¨à´‚ 0.60 mm | à´…à´•à´¤àµà´¤àµ 200",idioma:"à´­à´¾à´·",largura:"à´ªàµà´±à´¤àµà´¤àµ† à´•àµ‹à´¯à´¿àµ½ à´µàµ€à´¤à´¿ (cm)",agroLargura:"à´«àµà´²à´¾à´ªàµà´ªàµ à´µàµ€à´¤à´¿ (cm)",espessura:"à´·àµ€à´±àµà´±àµ à´•à´¨à´‚ (mm)",velocidade:"à´¯à´¨àµà´¤àµà´° à´µàµ‡à´—à´‚ (m/min)",falta:"à´¬à´¾à´•àµà´•à´¿: ",tempo:"à´¬à´¾à´•àµà´•à´¿ à´¸à´®à´¯à´‚ ",acaba:"à´¸à´¾à´§àµà´¯à´®à´¾à´¯ à´…à´µà´¸à´¾à´¨ à´¸à´®à´¯à´‚: ",trocar:"à´‰à´ªà´¯àµ‹à´•àµà´¤à´¾à´µàµ à´®à´¾à´±àµà´±àµà´•",voltar:"à´“à´ªàµà´·à´¨àµà´•à´³à´¿à´²àµ‡à´•àµà´•àµ à´®à´Ÿà´™àµà´™àµà´•",primeiro:"à´†à´¦àµà´¯ à´ªàµà´°à´µàµ‡à´¶à´¨à´‚",bomDia:"à´¸àµà´ªàµà´°à´­à´¾à´¤à´‚",boaTarde:"à´¶àµà´­ à´‰à´šàµà´šà´¤à´¿à´°à´¿à´žàµà´žàµ",boaNoite:"à´¶àµà´­ à´°à´¾à´¤àµà´°à´¿",ultimo:"à´…à´µà´¸à´¾à´¨ à´ªàµà´°à´µàµ‡à´¶à´¨à´‚"},
+    pa:{escolha:"à¨•à©ˆà¨²à¨•à©à¨²à©‡à¨Ÿà¨° à¨šà©à¨£à©‹",titulo:"à¨•à©‹à¨‡à¨² à¨•à©ˆà¨²à¨•à©à¨²à©‡à¨Ÿà¨°",bobina:"à¨•à©‹à¨‡à¨² à¨•à©ˆà¨²à¨•à©à¨²à©‡à¨Ÿà¨°",bobinaSub:"à¨®à¨¿à¨†à¨°à©€ à¨•à©‹à¨‡à¨² à¨—à¨¿à¨£à¨¤à©€",agro:"à¨à¨—à©à¨°à©‹à¨ªà©ˆà¨¨à¨² à¨•à©ˆà¨²à¨•à©à¨²à©‡à¨Ÿà¨°",agroSub:"à¨¨à¨¿à¨¶à¨šà¨¿à¨¤ à¨®à©‹à¨Ÿà¨¾à¨ˆ 0.60 mm | à¨…à©°à¨¦à¨° 200",idioma:"à¨­à¨¾à¨¸à¨¼à¨¾",largura:"à¨¬à¨¾à¨¹à¨°à©€ à¨•à©‹à¨‡à¨² à¨šà©Œà©œà¨¾à¨ˆ (cm)",agroLargura:"à¨«à¨²à©ˆà¨ª à¨šà©Œà©œà¨¾à¨ˆ (cm)",espessura:"à¨¸à¨¼à©€à¨Ÿ à¨®à©‹à¨Ÿà¨¾à¨ˆ (mm)",velocidade:"à¨®à¨¸à¨¼à©€à¨¨ à¨—à¨¤à©€ (m/min)",falta:"à¨¬à¨¾à¨•à©€: ",tempo:"à¨¬à¨¾à¨•à©€ à¨¸à¨®à¨¾à¨‚ ",acaba:"à¨¸à¨¼à¨¾à¨‡à¨¦ à¨®à©à¨•à©°à¨®à¨²: ",trocar:"à¨¯à©‚à¨œà¨¼à¨° à¨¬à¨¦à¨²à©‹",voltar:"à¨šà©‹à¨£à¨¾à¨‚ à¨µà©±à¨² à¨µà¨¾à¨ªà¨¸",primeiro:"à¨ªà¨¹à¨¿à¨²à©€ à¨ªà¨¹à©à©°à¨š",bomDia:"à¨¸à¨¤à¨¿ à¨¸à©à¨°à©€ à¨…à¨•à¨¾à¨²",boaTarde:"à¨¸à¨¼à©à¨­ à¨¦à©à¨ªà¨¹à¨¿à¨°",boaNoite:"à¨¸à¨¼à©à¨­ à¨°à¨¾à¨¤",ultimo:"à¨†à¨–à¨°à©€ à¨ªà¨¹à©à©°à¨š"}
 }
 
 function showMain(){
@@ -55,7 +66,7 @@ if(nome){
     })
 }
 
-// botão trocar usuário
+// botÃ£o trocar usuÃ¡rio
 resetBtn.onclick = ()=>{
     localStorage.removeItem("nomeUsuario")
     localStorage.removeItem("idiomaUsuario")
@@ -64,21 +75,52 @@ resetBtn.onclick = ()=>{
 }
 
 function start(){
-    const t = textos[idioma]
-    document.getElementById("tituloPrograma").innerText = "Escolha a calculadora"
-    document.getElementById("labelLargura").innerText = t.largura
-    document.getElementById("labelEspessura").innerText = t.espessura
-    document.getElementById("labelVelocidade").innerText = t.velocidade
-    resetBtn.innerText = t.trocar
+    let t = textos[idioma] || textos.pt
+    let telaAtual = "escolha"
+
+    function aplicarIdioma(){
+        t = textos[idioma] || textos.pt
+        idiomaSelect.value = idioma
+        idiomaAtualSelect.value = idioma
+        labelIdiomaAtual.innerText = t.idioma
+        document.getElementById("labelLargura").innerText = t.largura
+        document.getElementById("labelEspessura").innerText = t.espessura
+        document.getElementById("labelVelocidade").innerText = t.velocidade
+        document.getElementById("labelAgroLargura").innerText = t.agroLargura
+        document.getElementById("labelAgroVelocidade").innerText = t.velocidade
+        abrirBobinaBtn.querySelector("strong").innerText = t.bobina
+        abrirBobinaBtn.querySelector("span").innerText = t.bobinaSub
+        abrirAgropainelBtn.querySelector("strong").innerText = t.agro
+        abrirAgropainelBtn.querySelector("span").innerText = t.agroSub
+        document.querySelector(".agroIntro strong").innerText = t.agro
+        document.querySelector(".agroIntro span").innerText = t.agroSub
+        voltarBobinaBtn.innerText = t.voltar
+        voltarAgropainelBtn.innerText = t.voltar
+        resetBtn.innerText = t.trocar
+        if(telaAtual === "escolha") document.getElementById("tituloPrograma").innerText = t.escolha
+        if(telaAtual === "bobina") document.getElementById("tituloPrograma").innerText = t.titulo
+        if(telaAtual === "agro") document.getElementById("tituloPrograma").innerText = t.agro
+    }
+
+    function trocarIdioma(novoIdioma){
+        idioma = textos[novoIdioma] ? novoIdioma : "pt"
+        localStorage.setItem("idiomaUsuario", idioma)
+        aplicarIdioma()
+        atualizarSaudacao()
+        calc()
+        calcAgropainel()
+    }
 
     function mostrarEscolha(){
-        document.getElementById("tituloPrograma").innerText = "Escolha a calculadora"
+        telaAtual = "escolha"
+        document.getElementById("tituloPrograma").innerText = t.escolha
         calculatorChoice.style.display = "grid"
         bobinaCalculator.style.display = "none"
         agropainelCalculator.style.display = "none"
     }
 
     function abrirCalculadoraBobina(){
+        telaAtual = "bobina"
         document.getElementById("tituloPrograma").innerText = t.titulo
         calculatorChoice.style.display = "none"
         bobinaCalculator.style.display = "block"
@@ -87,7 +129,8 @@ function start(){
     }
 
     function abrirCalculadoraAgropainel(){
-        document.getElementById("tituloPrograma").innerText = "Calculadora Agropainel"
+        telaAtual = "agro"
+        document.getElementById("tituloPrograma").innerText = t.agro
         calculatorChoice.style.display = "none"
         bobinaCalculator.style.display = "none"
         agropainelCalculator.style.display = "block"
@@ -98,18 +141,20 @@ function start(){
     abrirAgropainelBtn.onclick = abrirCalculadoraAgropainel
     voltarBobinaBtn.onclick = mostrarEscolha
     voltarAgropainelBtn.onclick = mostrarEscolha
+    idiomaAtualSelect.onchange = ()=>trocarIdioma(idiomaAtualSelect.value)
 
-    // saudação
+    // saudaÃ§Ã£o
     const saudacao = document.getElementById("saudacao")
     function atualizarSaudacao(){
         const agora = new Date()
         let h = agora.getHours()
-        let s="Boa noite"
-        if(h<12)s="Bom dia"
-        else if(h<18)s="Boa tarde"
+        let s=t.boaNoite
+        if(h<12)s=t.bomDia
+        else if(h<18)s=t.boaTarde
         const ultimo = localStorage.getItem("ultimo") || t.primeiro
-        saudacao.innerHTML = s+", "+nome+"<br>Último acesso: "+ultimo+"<br>"+agora.toLocaleTimeString()
+        saudacao.innerHTML = s+", "+nome+"<br>"+t.ultimo+": "+ultimo+"<br>"+agora.toLocaleTimeString()
     }
+    aplicarIdioma()
     setInterval(atualizarSaudacao,1000)
     atualizarSaudacao()
     window.addEventListener("beforeunload", ()=>{
@@ -231,3 +276,4 @@ function start(){
     mostrarEscolha()
 }
 })
+
