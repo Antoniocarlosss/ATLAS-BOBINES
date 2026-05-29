@@ -60,6 +60,20 @@ gtag('config', 'G-J6VCHDN4X2');
 
 <div id="saudacao" class="saudacao"></div>
 
+<section id="calculatorChoice" class="calculatorChoice">
+    <button id="abrirBobinaBtn" type="button" class="choiceCard">
+        <strong>Calculadora Bobina</strong>
+        <span>Calculadora que ja existe no sistema</span>
+    </button>
+    <button id="abrirAgropainelBtn" type="button" class="choiceCard">
+        <strong>Calculadora Agropainel</strong>
+        <span>Espessura fixa 0.60 mm | Interno 200</span>
+    </button>
+</section>
+
+<section id="bobinaCalculator" class="calculatorSection" style="display:none;">
+<button id="voltarBobinaBtn" type="button" class="backChoiceBtn">Voltar para opcoes</button>
+
 <label id="labelLargura">Largura da bobina externa (cm)</label><br>
 <select id="largura"></select><br><br>
 
@@ -232,6 +246,29 @@ gtag('config', 'G-J6VCHDN4X2');
         <span id="visualVelocidade">0 m/min</span>
         <span id="visualEspessura">0 mm</span>
     </div>
+</section>
+
+</section>
+
+<section id="agropainelCalculator" class="calculatorSection" style="display:none;">
+<button id="voltarAgropainelBtn" type="button" class="backChoiceBtn">Voltar para opcoes</button>
+
+<div class="agroIntro">
+    <strong>Calculadora Agropainel</strong>
+    <span>Espessura fixa: 0.60 mm | Interno: 200</span>
+</div>
+
+<label id="labelAgroLargura">Largura da aba (cm)</label><br>
+<select id="agroLargura"></select><br><br>
+
+<label id="labelAgroVelocidade">Velocidade da maquina (m/min)</label><br>
+<div id="agroVelocidades" class="btnGroup"></div><br>
+
+<div id="resultadoAgro">
+    <h3 id="agroMetros"></h3>
+    <h3 id="agroTempo"></h3>
+    <h3 id="agroHora"></h3>
+</div>
 </section>
 
 <button id="resetUser">Trocar usuário</button>

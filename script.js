@@ -7,6 +7,13 @@ const idiomaSelect = document.getElementById("idiomaSelect")
 const entrar = document.getElementById("entrarBtn")
 const resetBtn = document.getElementById("resetUser")
 const nomeErro = document.getElementById("nomeErro")
+const calculatorChoice = document.getElementById("calculatorChoice")
+const bobinaCalculator = document.getElementById("bobinaCalculator")
+const agropainelCalculator = document.getElementById("agropainelCalculator")
+const abrirBobinaBtn = document.getElementById("abrirBobinaBtn")
+const abrirAgropainelBtn = document.getElementById("abrirAgropainelBtn")
+const voltarBobinaBtn = document.getElementById("voltarBobinaBtn")
+const voltarAgropainelBtn = document.getElementById("voltarAgropainelBtn")
 
 let nome = localStorage.getItem("nomeUsuario")
 let idioma = localStorage.getItem("idiomaUsuario") || "pt"
@@ -58,12 +65,40 @@ resetBtn.onclick = ()=>{
 
 function start(){
     const t = textos[idioma]
-    document.getElementById("tituloPrograma").innerText = t.titulo
+    document.getElementById("tituloPrograma").innerText = "Escolha a calculadora"
     document.getElementById("labelLargura").innerText = t.largura
     document.getElementById("labelEspessura").innerText = t.espessura
     document.getElementById("labelVelocidade").innerText = t.velocidade
     document.getElementById("labelVisual3d").innerText = t.visual
     resetBtn.innerText = t.trocar
+
+    function mostrarEscolha(){
+        document.getElementById("tituloPrograma").innerText = "Escolha a calculadora"
+        calculatorChoice.style.display = "grid"
+        bobinaCalculator.style.display = "none"
+        agropainelCalculator.style.display = "none"
+    }
+
+    function abrirCalculadoraBobina(){
+        document.getElementById("tituloPrograma").innerText = t.titulo
+        calculatorChoice.style.display = "none"
+        bobinaCalculator.style.display = "block"
+        agropainelCalculator.style.display = "none"
+        calc()
+    }
+
+    function abrirCalculadoraAgropainel(){
+        document.getElementById("tituloPrograma").innerText = "Calculadora Agropainel"
+        calculatorChoice.style.display = "none"
+        bobinaCalculator.style.display = "none"
+        agropainelCalculator.style.display = "block"
+        calcAgropainel()
+    }
+
+    abrirBobinaBtn.onclick = abrirCalculadoraBobina
+    abrirAgropainelBtn.onclick = abrirCalculadoraAgropainel
+    voltarBobinaBtn.onclick = mostrarEscolha
+    voltarAgropainelBtn.onclick = mostrarEscolha
 
     // saudação
     const saudacao = document.getElementById("saudacao")
@@ -127,6 +162,31 @@ function start(){
         if(v === velSel) b.classList.add("selecionado")
     })
 
+    const agroLargura = document.getElementById("agroLargura")
+    for(let i=1;i<=50;i+=0.5){
+        let o=document.createElement("option")
+        o.value=i
+        o.text=(i%1===0)? i+" cm":i.toFixed(1)+" cm"
+        agroLargura.appendChild(o)
+    }
+    agroLargura.value = "15"
+    agroLargura.addEventListener("change", calcAgropainel)
+
+    const agroVelDiv=document.getElementById("agroVelocidades")
+    let agroVelSel=10
+    vel.forEach(v=>{
+        let b=document.createElement("button")
+        b.innerHTML=`<img src="https://img.icons8.com/color/48/speed.png" style="width:18px;height:18px;margin-right:5px;"> ${v} m/min`
+        b.onclick=()=>{
+            agroVelDiv.querySelectorAll("button").forEach(x=>x.classList.remove("selecionado"))
+            b.classList.add("selecionado")
+            agroVelSel=v
+            calcAgropainel()
+        }
+        agroVelDiv.appendChild(b)
+        if(v === agroVelSel) b.classList.add("selecionado")
+    })
+
     const visual3d = criarVisual3d()
     const visualPanel = document.getElementById("visual3dPanel")
     const toggleVisual = document.getElementById("toggleVisual3d")
@@ -161,6 +221,27 @@ function start(){
         visual3d.update({larguraCm:largura_cm, espessura:espSel, velocidade:velSel, metros})
     }
 
+    function calcAgropainel(){
+        const interno=200
+        const espessura=0.60
+        const pi=3.14
+        const largura_cm=parseFloat(agroLargura.value)
+        const largura_mm=largura_cm*10
+        const p1=largura_mm/espessura
+        const p2=p1*pi
+        const soma=interno+largura_mm
+        const metros=Math.round((p2*soma)/1000)
+        const tempoTotalMin=Math.round(metros/agroVelSel)
+        const fim=new Date()
+        fim.setMinutes(fim.getMinutes()+tempoTotalMin)
+        const horas=Math.floor(tempoTotalMin/60)
+        const minutos=tempoTotalMin%60
+        let textoTempo = (horas>0)? horas+" hr e "+minutos+" min" : minutos+" minutos"
+        document.getElementById("agroMetros").innerText = t.falta + metros + " metros"
+        document.getElementById("agroTempo").innerText = t.tempo + textoTempo
+        document.getElementById("agroHora").innerText = t.acaba + fim.toLocaleTimeString()
+    }
+
     function criarVisual3d(){
         const bobina = document.getElementById("bobinaAnimadaSvg")
         const folha = document.getElementById("folhaSaindoSvg")
@@ -176,5 +257,6 @@ function start(){
         return {update, resize(){}}
     }
     calc()
+    mostrarEscolha()
 }
 })
