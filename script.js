@@ -19,9 +19,10 @@ const labelIdiomaAtual = document.getElementById("labelIdiomaAtual")
 
 let nome = localStorage.getItem("nomeUsuario")
 let idioma = localStorage.getItem("idiomaUsuario") || "pt"
+if(!["pt", "en"].includes(idioma)) idioma = "en"
 
 const textos = {
-    pt:{escolha:"Escolha a calculadora",titulo:"Calculadora de Bobina",bobina:"Calculadora Bobina",bobinaSub:"CÃ¡lculo padrÃ£o de bobinas",agro:"Calculadora Agropainel",agroSub:"Espessura fixa 0.60 mm | Interno 200",idioma:"Idioma",largura:"Largura da bobina externa (cm)",agroLargura:"Largura da aba (cm)",espessura:"Espessura da chapa (mm)",velocidade:"Velocidade da mÃ¡quina (m/min)",falta:"Falta para acabar: ",tempo:"Falta ",acaba:"Provavelmente acaba Ã s: ",trocar:"Trocar usuÃ¡rio",voltar:"Voltar para opÃ§Ãµes",primeiro:"Primeiro acesso",bomDia:"Bom dia",boaTarde:"Boa tarde",boaNoite:"Boa noite",ultimo:"Ãšltimo acesso"},
+    pt:{escolha:"Escolha a calculadora",titulo:"Calculadora de Bobina",bobina:"Calculadora Bobina",bobinaSub:"Calculo padrao de bobinas",agro:"Calculadora Agropainel",agroSub:"Espessura fixa 0.60 mm | Interno 200",idioma:"Idioma",largura:"Largura da bobina externa (cm)",agroLargura:"Largura da aba (cm)",espessura:"Espessura da chapa (mm)",velocidade:"Velocidade da maquina (m/min)",falta:"Falta para acabar: ",tempo:"Falta ",acaba:"Provavelmente acaba as: ",trocar:"Trocar usuario",voltar:"Voltar para opcoes",primeiro:"Primeiro acesso",bomDia:"Bom dia",boaTarde:"Boa tarde",boaNoite:"Boa noite",ultimo:"Ultimo acesso"},
     en:{escolha:"Choose the calculator",titulo:"Coil Calculator",bobina:"Coil Calculator",bobinaSub:"Standard coil calculation",agro:"Agropanel Calculator",agroSub:"Fixed thickness 0.60 mm | Core 200",idioma:"Language",largura:"Outer coil width (cm)",agroLargura:"Flap width (cm)",espessura:"Sheet thickness (mm)",velocidade:"Machine speed (m/min)",falta:"Remaining: ",tempo:"Time left ",acaba:"Probably finishes at: ",trocar:"Change user",voltar:"Back to options",primeiro:"First access",bomDia:"Good morning",boaTarde:"Good afternoon",boaNoite:"Good evening",ultimo:"Last access"},
     hi:{escolha:"à¤•à¥ˆà¤²à¤•à¥à¤²à¥‡à¤Ÿà¤° à¤šà¥à¤¨à¥‡à¤‚",titulo:"à¤•à¥‰à¤‡à¤² à¤•à¥ˆà¤²à¤•à¥à¤²à¥‡à¤Ÿà¤°",bobina:"à¤•à¥‰à¤‡à¤² à¤•à¥ˆà¤²à¤•à¥à¤²à¥‡à¤Ÿà¤°",bobinaSub:"à¤®à¤¾à¤¨à¤• à¤•à¥‰à¤‡à¤² à¤—à¤£à¤¨à¤¾",agro:"à¤à¤—à¥à¤°à¥‹à¤ªà¥ˆà¤¨à¤² à¤•à¥ˆà¤²à¤•à¥à¤²à¥‡à¤Ÿà¤°",agroSub:"à¤¨à¤¿à¤¶à¥à¤šà¤¿à¤¤ à¤®à¥‹à¤Ÿà¤¾à¤ˆ 0.60 mm | à¤…à¤‚à¤¦à¤° 200",idioma:"à¤­à¤¾à¤·à¤¾",largura:"à¤¬à¤¾à¤¹à¤°à¥€ à¤•à¥‰à¤‡à¤² à¤šà¥Œà¤¡à¤¼à¤¾à¤ˆ (cm)",agroLargura:"à¤«à¥à¤²à¥ˆà¤ª à¤šà¥Œà¤¡à¤¼à¤¾à¤ˆ (cm)",espessura:"à¤¶à¥€à¤Ÿ à¤®à¥‹à¤Ÿà¤¾à¤ˆ (mm)",velocidade:"à¤®à¤¶à¥€à¤¨ à¤—à¤¤à¤¿ (m/min)",falta:"à¤¬à¤¾à¤•à¥€: ",tempo:"à¤¸à¤®à¤¯ à¤¬à¤¾à¤•à¥€ ",acaba:"à¤¸à¤‚à¤­à¤¾à¤µà¤¿à¤¤ à¤¸à¤®à¤¾à¤ªà¥à¤¤à¤¿: ",trocar:"à¤¯à¥‚à¤œà¤¼à¤° à¤¬à¤¦à¤²à¥‡à¤‚",voltar:"à¤µà¤¿à¤•à¤²à¥à¤ªà¥‹à¤‚ à¤ªà¤° à¤µà¤¾à¤ªà¤¸",primeiro:"à¤ªà¤¹à¤²à¥€ à¤¬à¤¾à¤°",bomDia:"à¤¸à¥à¤ªà¥à¤°à¤­à¤¾à¤¤",boaTarde:"à¤¨à¤®à¤¸à¥à¤•à¤¾à¤°",boaNoite:"à¤¶à¥à¤­ à¤°à¤¾à¤¤à¥à¤°à¤¿",ultimo:"à¤…à¤‚à¤¤à¤¿à¤® à¤ªà¥à¤°à¤µà¥‡à¤¶"},
     bn:{escolha:"à¦•à§à¦¯à¦¾à¦²à¦•à§à¦²à§‡à¦Ÿà¦° à¦¬à§‡à¦›à§‡ à¦¨à¦¿à¦¨",titulo:"à¦•à§Ÿà§‡à¦² à¦•à§à¦¯à¦¾à¦²à¦•à§à¦²à§‡à¦Ÿà¦°",bobina:"à¦•à§Ÿà§‡à¦² à¦•à§à¦¯à¦¾à¦²à¦•à§à¦²à§‡à¦Ÿà¦°",bobinaSub:"à¦¸à§à¦Ÿà§à¦¯à¦¾à¦¨à§à¦¡à¦¾à¦°à§à¦¡ à¦•à§Ÿà§‡à¦² à¦—à¦£à¦¨à¦¾",agro:"à¦…à§à¦¯à¦¾à¦—à§à¦°à§‹à¦ªà§à¦¯à¦¾à¦¨à§‡à¦² à¦•à§à¦¯à¦¾à¦²à¦•à§à¦²à§‡à¦Ÿà¦°",agroSub:"à¦¸à§à¦¥à¦¿à¦° à¦ªà§à¦°à§à¦¤à§à¦¬ 0.60 mm | à¦­à¦¿à¦¤à¦° 200",idioma:"à¦­à¦¾à¦·à¦¾",largura:"à¦¬à¦¾à¦‡à¦°à§‡à¦° à¦•à§Ÿà§‡à¦² à¦ªà§à¦°à¦¸à§à¦¥ (cm)",agroLargura:"à¦«à§à¦²à§à¦¯à¦¾à¦ª à¦ªà§à¦°à¦¸à§à¦¥ (cm)",espessura:"à¦¶à¦¿à¦Ÿà§‡à¦° à¦ªà§à¦°à§à¦¤à§à¦¬ (mm)",velocidade:"à¦®à§‡à¦¶à¦¿à¦¨à§‡à¦° à¦—à¦¤à¦¿ (m/min)",falta:"à¦¬à¦¾à¦•à¦¿: ",tempo:"à¦¸à¦®à§Ÿ à¦¬à¦¾à¦•à¦¿ ",acaba:"à¦¸à¦®à§à¦­à¦¬à¦¤ à¦¶à§‡à¦· à¦¹à¦¬à§‡: ",trocar:"à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦°à¦•à¦¾à¦°à§€ à¦¬à¦¦à¦²à¦¾à¦¨",voltar:"à¦¬à¦¿à¦•à¦²à§à¦ªà§‡ à¦«à¦¿à¦°à§à¦¨",primeiro:"à¦ªà§à¦°à¦¥à¦® à¦ªà§à¦°à¦¬à§‡à¦¶",bomDia:"à¦¸à§à¦ªà§à¦°à¦­à¦¾à¦¤",boaTarde:"à¦¶à§à¦­ à¦…à¦ªà¦°à¦¾à¦¹à§à¦¨",boaNoite:"à¦¶à§à¦­ à¦°à¦¾à¦¤à§à¦°à¦¿",ultimo:"à¦¶à§‡à¦· à¦ªà§à¦°à¦¬à§‡à¦¶"},
@@ -66,7 +67,7 @@ if(nome){
     })
 }
 
-// botÃ£o trocar usuÃ¡rio
+// Botao trocar usuario
 resetBtn.onclick = ()=>{
     localStorage.removeItem("nomeUsuario")
     localStorage.removeItem("idiomaUsuario")
@@ -75,6 +76,7 @@ resetBtn.onclick = ()=>{
 }
 
 function start(){
+    if(textos[idioma] && /Ã|Â|�|à|Ú|Ø|Ù/.test(textos[idioma].escolha)) idioma = "en"
     let t = textos[idioma] || textos.pt
     let telaAtual = "escolha"
 
@@ -103,7 +105,7 @@ function start(){
     }
 
     function trocarIdioma(novoIdioma){
-        idioma = textos[novoIdioma] ? novoIdioma : "pt"
+        idioma = textos[novoIdioma] && !/Ã|Â|�|à|Ú|Ø|Ù/.test(textos[novoIdioma].escolha) ? novoIdioma : "en"
         localStorage.setItem("idiomaUsuario", idioma)
         aplicarIdioma()
         atualizarSaudacao()
