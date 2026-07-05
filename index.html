@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> 
+﻿﻿<!DOCTYPE html> 
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -140,10 +140,34 @@ gtag('config', 'G-J6VCHDN4X2');
 </div>
 </section>
 
+<section id="historicoSection" class="historicoSection">
+    <div class="historicoHeader">
+        <div>
+            <span>Historico online</span>
+            <h3>Ultimos calculos</h3>
+        </div>
+        <small id="historicoStatus">A ligar ao historico...</small>
+    </div>
+
+    <div class="historicoActions">
+        <button id="salvarHistoricoBobina" type="button">Salvar Bobina no historico</button>
+        <button id="salvarHistoricoAgro" type="button">Salvar Agropainel no historico</button>
+    </div>
+
+    <div id="historicoLista" class="historicoLista">
+        <p>Nenhum historico carregado.</p>
+    </div>
+</section>
+
 <button id="resetUser">Trocar usuario</button>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="firebase.js"></script>
 <script src="script.js"></script>
+<script src="historico.js"></script>
 </div>
 </body>
 </html>
+
 
