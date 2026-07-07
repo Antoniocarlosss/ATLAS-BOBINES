@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
     function formatarMomento(dataIso){
         const data = new Date(dataIso);
-        return `${data.toLocaleDateString("pt-PT", {day:"2-digit", month:"2-digit"})} - ${data.toLocaleTimeString("pt-PT", {hour:"2-digit", minute:"2-digit"})}`;
+        return `${data.toLocaleDateString("pt-PT")} ${data.toLocaleTimeString("pt-PT", {hour:"2-digit", minute:"2-digit"})}`;
     }
 
     function carregar(){
@@ -52,12 +52,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 <small>${htmlSeguro(formatarMomento(item.criadoEmLocal))}</small>
                 <span>${htmlSeguro(formatarNumero(item.espessuraMm))} mm</span>
                 <span>${htmlSeguro(formatarNumero(item.velocidade))} m/min</span>
-                <span>${htmlSeguro(formatarNumero(item.metros))} m</span>
+                <span>${htmlSeguro(formatarNumero(item.metros))} metros</span>
             </article>
         `).join("");
     }
 
     function salvarLocal(dados){
+        if(!dados || !dados.espessuraMm || !dados.velocidade || !dados.metros) return;
+
         const item = {
             usuario: dados.usuario || localStorage.getItem("nomeUsuario") || "Usuario",
             criadoEmLocal: new Date().toISOString(),
@@ -71,8 +73,15 @@ document.addEventListener("DOMContentLoaded", ()=>{
             velocidade: item.velocidade,
             metros: item.metros
         });
+        const ultimo = carregar()[0];
+        const ultimaAssinaturaSalva = ultimo ? JSON.stringify({
+            usuario: ultimo.usuario,
+            espessuraMm: Number(ultimo.espessuraMm || 0),
+            velocidade: Number(ultimo.velocidade || 0),
+            metros: Number(ultimo.metros || 0)
+        }) : "";
 
-        if(assinatura === ultimaAssinatura) return;
+        if(assinatura === ultimaAssinatura || assinatura === ultimaAssinaturaSalva) return;
         ultimaAssinatura = assinatura;
 
         gravar([item, ...carregar()]);
@@ -90,9 +99,13 @@ document.addEventListener("DOMContentLoaded", ()=>{
         }
     }
 
-    window.addEventListener("atlas:bobina-calculada", (event)=>{
-        salvarLocal(event.detail || {});
-    });
+    window.AtlasHistoricoBobina = {
+        salvar: salvarLocal,
+        renderizar,
+        carregar
+    };
+
+    window.addEventListener("atlas:bobina-calculada", (event)=>salvarLocal(event.detail || {}));
 
     renderizar();
 });

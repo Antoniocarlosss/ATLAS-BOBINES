@@ -51,6 +51,10 @@ Na aba Bobina aparece somente o Historico Bobina.
 Na aba Agropainel aparece somente o Historico Agropainel.
 Cada cartao mostra apenas nome do usuario, data e hora, mm da chapa, velocidade e metros.
 
+Na Bobina, o historico so grava depois que o usuario seleciona uma espessura e uma velocidade.
+Calculos repetidos com os mesmos dados nao geram duplicatas.
+O botao "Testar Banco de Dados" possui tempo limite e sempre mostra sucesso, erro ou banco nao configurado.
+
 O botao "Testar Banco de Dados" cria e le um documento na colecao testes_banco.
 Se a leitura funcionar, a tela mostra a mensagem verde de sucesso.
 Se houver erro de regra, conexao ou configuracao, a mensagem completa aparece em vermelho.

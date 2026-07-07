@@ -8,6 +8,15 @@ document.addEventListener("DOMContentLoaded", ()=>{
         return Boolean(window.AtlasFirebase && window.AtlasFirebase.db);
     }
 
+    function comTimeout(promessa, tempoMs){
+        return Promise.race([
+            promessa,
+            new Promise((_, rejeitar)=>{
+                setTimeout(()=>rejeitar(new Error("Tempo limite excedido ao tentar conectar ao Firebase.")), tempoMs);
+            })
+        ]);
+    }
+
     async function testarBanco(){
         mensagem.className = "firebaseTesteMensagem carregando";
         mensagem.innerText = "Testando banco de dados...";
@@ -20,7 +29,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
                 return;
             }
 
-            await window.AtlasFirebase.testarBanco();
+            await comTimeout(window.AtlasFirebase.testarBanco(), 8000);
             mensagem.className = "firebaseTesteMensagem sucesso";
             mensagem.innerText = "✅ Banco de dados conectado com sucesso.";
         }catch(error){

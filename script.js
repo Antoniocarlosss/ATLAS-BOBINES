@@ -206,6 +206,7 @@ function start(){
     const espDiv=document.getElementById("espessuras")
     const esp=[0.28,0.30,0.32,0.35,0.38,0.40,0.43,0.45,0.68]
     let espSel=0.32
+    let espessuraSelecionadaPeloUsuario=false
     esp.forEach(e=>{
         let b=document.createElement("button")
         b.innerHTML=`<img src="https://img.icons8.com/dotty/80/line-width.png" style="width:18px;height:18px;margin-right:5px;"> ${e} mm`
@@ -213,6 +214,7 @@ function start(){
             espDiv.querySelectorAll("button").forEach(x=>x.classList.remove("selecionado"))
             b.classList.add("selecionado")
             espSel=e
+            espessuraSelecionadaPeloUsuario=true
             calc()
         }
         espDiv.appendChild(b)
@@ -223,6 +225,7 @@ function start(){
     const velDiv=document.getElementById("velocidades")
     const vel=[5,6,7,8,9,10,11,12]
     let velSel=10
+    let velocidadeSelecionadaPeloUsuario=false
     vel.forEach(v=>{
         let b=document.createElement("button")
         b.innerHTML=`<img src="https://img.icons8.com/color/48/speed.png" style="width:18px;height:18px;margin-right:5px;"> ${v} m/min`
@@ -230,6 +233,7 @@ function start(){
             velDiv.querySelectorAll("button").forEach(x=>x.classList.remove("selecionado"))
             b.classList.add("selecionado")
             velSel=v
+            velocidadeSelecionadaPeloUsuario=true
             calc()
         }
         velDiv.appendChild(b)
@@ -279,8 +283,8 @@ function start(){
         document.getElementById("metros").innerText = t.falta + metros + " metros"
         document.getElementById("tempo").innerText = t.tempo + textoTempo
         document.getElementById("hora").innerText = t.acaba + fim.toLocaleTimeString()
-        if(telaAtual === "bobina"){
-            window.dispatchEvent(new CustomEvent("atlas:bobina-calculada", { detail: {
+        if(telaAtual === "bobina" && espessuraSelecionadaPeloUsuario && velocidadeSelecionadaPeloUsuario){
+            const dadosHistorico = {
                 usuario: nome,
                 larguraCm: largura_cm,
                 espessuraMm: espSel,
@@ -288,7 +292,11 @@ function start(){
                 metros,
                 tempoTexto,
                 fimHora: fim.toLocaleTimeString()
-            }}))
+            }
+            if(window.AtlasHistoricoBobina && typeof window.AtlasHistoricoBobina.salvar === "function"){
+                window.AtlasHistoricoBobina.salvar(dadosHistorico)
+            }
+            window.dispatchEvent(new CustomEvent("atlas:bobina-calculada", { detail: dadosHistorico }))
         }
     }
 
@@ -312,7 +320,7 @@ function start(){
         document.getElementById("agroTempo").innerText = t.tempo + textoTempo
         document.getElementById("agroHora").innerText = t.acaba + fim.toLocaleTimeString()
         if(telaAtual === "agro"){
-            window.dispatchEvent(new CustomEvent("atlas:agropainel-calculado", { detail: {
+            const dadosHistorico = {
                 usuario: nome,
                 larguraCm: largura_cm,
                 espessuraMm: espessura,
@@ -320,7 +328,11 @@ function start(){
                 metros,
                 tempoTexto,
                 fimHora: fim.toLocaleTimeString()
-            }}))
+            }
+            if(window.AtlasHistoricoAgropainel && typeof window.AtlasHistoricoAgropainel.salvar === "function"){
+                window.AtlasHistoricoAgropainel.salvar(dadosHistorico)
+            }
+            window.dispatchEvent(new CustomEvent("atlas:agropainel-calculado", { detail: dadosHistorico }))
         }
     }
 
