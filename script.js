@@ -8,7 +8,6 @@ const entrar = document.getElementById("entrarBtn")
 const resetBtn = document.getElementById("resetUser")
 const nomeErro = document.getElementById("nomeErro")
 const calculatorChoice = document.getElementById("calculatorChoice")
-const bancoTesteSection = document.getElementById("bancoTesteSection")
 const bobinaCalculator = document.getElementById("bobinaCalculator")
 const agropainelCalculator = document.getElementById("agropainelCalculator")
 const abrirBobinaBtn = document.getElementById("abrirBobinaBtn")
@@ -141,7 +140,6 @@ function start(){
         telaAtual = "escolha"
         document.getElementById("tituloPrograma").innerText = t.escolha
         calculatorChoice.style.display = "grid"
-        bancoTesteSection.style.display = "block"
         bobinaCalculator.style.display = "none"
         agropainelCalculator.style.display = "none"
     }
@@ -150,7 +148,6 @@ function start(){
         telaAtual = "bobina"
         document.getElementById("tituloPrograma").innerText = t.titulo
         calculatorChoice.style.display = "none"
-        bancoTesteSection.style.display = "none"
         bobinaCalculator.style.display = "block"
         agropainelCalculator.style.display = "none"
         calc()
@@ -160,7 +157,6 @@ function start(){
         telaAtual = "agro"
         document.getElementById("tituloPrograma").innerText = t.agro
         calculatorChoice.style.display = "none"
-        bancoTesteSection.style.display = "none"
         bobinaCalculator.style.display = "none"
         agropainelCalculator.style.display = "block"
         calcAgropainel()
