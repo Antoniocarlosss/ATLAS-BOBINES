@@ -52,6 +52,33 @@
         );
     }
 
+    function numeroDoTexto(valor){
+        const encontrado = String(valor || "").replace(",", ".").match(/\d+(\.\d+)?/);
+        return encontrado ? Number(encontrado[0]) : 0;
+    }
+
+    function textoElemento(id){
+        const elemento = document.getElementById(id);
+        return elemento ? elemento.innerText.trim() : "";
+    }
+
+    function coletarCalculoDaTela(){
+        const espessuraSelecionada = document.querySelector("#espessuras button.selecionado");
+        const velocidadeSelecionada = document.querySelector("#velocidades button.selecionado");
+        const metrosTexto = textoElemento("metros");
+        const tempoTextoCompleto = textoElemento("tempo");
+        const horaTextoCompleto = textoElemento("hora");
+
+        return {
+            usuario: localStorage.getItem("nomeUsuario") || "Usuario",
+            espessuraMm: numeroDoTexto(espessuraSelecionada ? espessuraSelecionada.innerText : ""),
+            velocidade: numeroDoTexto(velocidadeSelecionada ? velocidadeSelecionada.innerText : ""),
+            metros: numeroDoTexto(metrosTexto),
+            tempoTexto: tempoTextoCompleto.replace(/^.*?(\d)/, "$1"),
+            fimHora: horaTextoCompleto.split(": ").pop()
+        };
+    }
+
     function carregarHistorico(){
         try{
             const historico = JSON.parse(localStorage.getItem(CHAVE_HISTORICO_BOBINA) || "[]");
@@ -138,7 +165,9 @@
 
     function salvarCalculoAtual(){
         const status = elementoStatus();
-        const dados = window.AtlasCalculoBobinaAtual;
+        const dados = calculoValido(window.AtlasCalculoBobinaAtual)
+            ? window.AtlasCalculoBobinaAtual
+            : coletarCalculoDaTela();
 
         if(!calculoValido(dados)){
             if(status) status.innerText = "Faça um cálculo antes de salvar";
