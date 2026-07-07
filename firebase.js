@@ -83,6 +83,12 @@ window.ATLAS_FIREBASE_CONFIG = {
             usuario: dados.usuario || usuarioAtual(),
             produtoBobina: dados.produtoBobina || dados.produto || dados.tipo || "Bobina",
             quantidade: Number(dados.quantidade ?? dados.metros ?? 0),
+            larguraCm: Number(dados.larguraCm ?? 0),
+            espessuraMm: Number(dados.espessuraMm ?? 0),
+            velocidade: Number(dados.velocidade ?? 0),
+            metros: Number(dados.metros ?? dados.quantidade ?? 0),
+            tempoTexto: dados.tempoTexto || "",
+            fimHora: dados.fimHora || "",
             observacao: dados.observacao || "",
             valores: dados,
             criadoEmLocal: momento.iso,
@@ -92,10 +98,20 @@ window.ATLAS_FIREBASE_CONFIG = {
 
     function montarHistoricoAgropainel(acao, antes, depois, usuario){
         const momento = dataHoraAtual();
+        const valores = depois || {};
         return limparIndefinidos({
             data: momento.data,
             hora: momento.hora,
             acaoRealizada: acao,
+            produtoBobina: "Agropainel",
+            quantidade: Number(valores.quantidade ?? valores.metros ?? 0),
+            larguraCm: Number(valores.larguraCm ?? 0),
+            espessuraMm: Number(valores.espessuraMm ?? 0.60),
+            velocidade: Number(valores.velocidade ?? 0),
+            metros: Number(valores.metros ?? valores.quantidade ?? 0),
+            tempoTexto: valores.tempoTexto || "",
+            fimHora: valores.fimHora || "",
+            observacao: valores.observacao || "",
             valoresAntes: antes || null,
             valoresDepois: depois || null,
             usuario: usuario || usuarioAtual(),
@@ -104,14 +120,38 @@ window.ATLAS_FIREBASE_CONFIG = {
         });
     }
 
+    async function manterSomenteUltimosDez(nomeColecao){
+        const snapshot = await firebaseApp.db.collection(nomeColecao)
+            .orderBy("criadoEm", "desc")
+            .get();
+
+        if(snapshot.size <= 10) return;
+
+        const batch = firebaseApp.db.batch();
+        snapshot.docs.slice(10).forEach((doc)=>batch.delete(doc.ref));
+        await batch.commit();
+    }
+
     async function registrarHistoricoBobina(acao, dados = {}){
         const historico = montarHistoricoBobina(acao, dados);
-        return firebaseApp.db.collection(COLECOES.historicoBobina).add(historico);
+        const doc = await firebaseApp.db.collection(COLECOES.historicoBobina).add(historico);
+        try{
+            await manterSomenteUltimosDez(COLECOES.historicoBobina);
+        }catch(error){
+            console.warn("Nao foi possivel apagar historicos antigos de bobina:", error);
+        }
+        return doc;
     }
 
     async function registrarHistoricoAgropainel(acao, antes = null, depois = null, usuario){
         const historico = montarHistoricoAgropainel(acao, antes, depois, usuario);
-        return firebaseApp.db.collection(COLECOES.historicoAgropainel).add(historico);
+        const doc = await firebaseApp.db.collection(COLECOES.historicoAgropainel).add(historico);
+        try{
+            await manterSomenteUltimosDez(COLECOES.historicoAgropainel);
+        }catch(error){
+            console.warn("Nao foi possivel apagar historicos antigos de agropainel:", error);
+        }
+        return doc;
     }
 
     async function salvarUsuario(dados){
@@ -160,7 +200,7 @@ window.ATLAS_FIREBASE_CONFIG = {
     function observarHistoricos(callback, onError){
         return firebaseApp.db.collection(COLECOES.historicoBobina)
             .orderBy("criadoEm", "desc")
-            .limit(50)
+            .limit(10)
             .onSnapshot((snapshot)=>{
                 callback(snapshot.docs.map((doc)=>({ id: doc.id, origem: "bobina", ...doc.data() })));
             }, onError);
@@ -169,7 +209,7 @@ window.ATLAS_FIREBASE_CONFIG = {
     function observarHistoricoAgropainel(callback, onError){
         return firebaseApp.db.collection(COLECOES.historicoAgropainel)
             .orderBy("criadoEm", "desc")
-            .limit(50)
+            .limit(10)
             .onSnapshot((snapshot)=>{
                 callback(snapshot.docs.map((doc)=>({ id: doc.id, origem: "agropainel", ...doc.data() })));
             }, onError);

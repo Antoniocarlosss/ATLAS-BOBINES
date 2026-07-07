@@ -143,22 +143,31 @@ gtag('config', 'G-J6VCHDN4X2');
 <section id="historicoSection" class="historicoSection">
     <div class="historicoHeader">
         <div>
-            <span>Historico online</span>
-            <h3>Ultimos calculos</h3>
+            <span>Historico online automatico</span>
+            <h3>Ultimos 10 calculos</h3>
         </div>
         <small id="historicoStatus">A ligar ao historico...</small>
     </div>
 
     <div class="historicoActions">
-        <button id="salvarHistoricoBobina" type="button">Salvar Bobina no historico</button>
-        <button id="salvarHistoricoAgro" type="button">Salvar Agropainel no historico</button>
         <button id="testarBancoBtn" type="button">Testar Banco de Dados</button>
     </div>
 
     <div id="firebaseTesteMensagem" class="firebaseTesteMensagem" aria-live="polite"></div>
 
-    <div id="historicoLista" class="historicoLista">
-        <p>Nenhum historico carregado.</p>
+    <div id="historicoLista" class="historicoLista historicoDuasListas">
+        <section class="historicoGrupo">
+            <h4>Bobinas</h4>
+            <div id="historicoBobinaLista">
+                <p>Nenhum historico de bobina carregado.</p>
+            </div>
+        </section>
+        <section class="historicoGrupo">
+            <h4>Agropainel</h4>
+            <div id="historicoAgropainelLista">
+                <p>Nenhum historico de agropainel carregado.</p>
+            </div>
+        </section>
     </div>
 </section>
 

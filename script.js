@@ -44,12 +44,12 @@ function salvarBobinaAutomaticamente(payload){
     clearTimeout(salvarBobinaTimer)
     salvarBobinaTimer = setTimeout(async ()=>{
         try{
-            await window.AtlasFirebase.registrarHistoricoBobina("alteracao_estoque", {
+            await window.AtlasFirebase.registrarHistoricoBobina("calculo automatico", {
                 ...payload,
                 usuario: nome,
                 produtoBobina: "Bobina",
                 quantidade: payload.metros,
-                observacao: "Alteracao automatica causada por novo calculo de bobina."
+                observacao: "Salvo automaticamente ao calcular bobina."
             })
         }catch(error){
             console.error("Erro ao registrar historico_bobina:", error)
@@ -70,7 +70,13 @@ function salvarAgropainelAutomaticamente(payload){
     clearTimeout(salvarAgropainelTimer)
     salvarAgropainelTimer = setTimeout(async ()=>{
         try{
-            await window.AtlasFirebase.registrarHistoricoAgropainel("alteracao", antes, payload, nome)
+            await window.AtlasFirebase.registrarHistoricoAgropainel("calculo automatico", antes, {
+                ...payload,
+                usuario: nome,
+                produtoBobina: "Agropainel",
+                quantidade: payload.metros,
+                observacao: "Salvo automaticamente ao calcular agropainel."
+            }, nome)
         }catch(error){
             console.error("Erro ao registrar historico_agropainel:", error)
         }
@@ -247,7 +253,7 @@ function start(){
 
     // espessura
     const espDiv=document.getElementById("espessuras")
-    const esp=[0.24,0.28,0.30,0.32,0.35,0.38,0.40,0.43,0.45,0.68]
+    const esp=[0.28,0.30,0.32,0.35,0.38,0.40,0.43,0.45,0.68]
     let espSel=0.32
     esp.forEach(e=>{
         let b=document.createElement("button")

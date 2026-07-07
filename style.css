@@ -387,13 +387,38 @@ button:hover {
 
 .historicoLista {
     display: grid;
-    gap: 10px;
+    gap: 14px;
 }
 
 .historicoLista p {
     margin: 0;
     color: #c4d0d9;
     text-align: center;
+}
+
+.historicoDuasListas {
+    grid-template-columns: 1fr;
+}
+
+.historicoGrupo {
+    min-width: 0;
+}
+
+.historicoGrupo h4 {
+    margin: 0 0 9px;
+    padding: 8px 10px;
+    background: rgba(0, 224, 255, 0.10);
+    border: 1px solid rgba(0, 224, 255, 0.20);
+    border-radius: 6px;
+    color: #00e0ff;
+    font-size: 16px;
+    text-align: center;
+}
+
+#historicoBobinaLista,
+#historicoAgropainelLista {
+    display: grid;
+    gap: 10px;
 }
 
 .historicoItem {
@@ -409,15 +434,63 @@ button:hover {
     display: block;
 }
 
+.historicoItemBobina {
+    border-color: rgba(0, 224, 255, 0.32);
+}
+
+.historicoItemAgropainel {
+    border-color: rgba(0, 255, 156, 0.30);
+}
+
+.historicoTopo {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    align-items: center;
+}
+
 .historicoItem strong {
     color: #ffffff;
     font-size: 16px;
 }
 
-.historicoItem span {
+.historicoTopo small {
+    margin: 0;
+    color: #9fb5c8;
+    font-size: 12px;
+    text-align: right;
+}
+
+.historicoUsuario {
     margin-top: 5px;
     color: #00ff9c;
+    font-weight: bold;
     font-size: 15px;
+}
+
+.historicoResumo {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.historicoResumo b {
+    min-width: 0;
+    padding: 8px 6px;
+    background: #111722;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 14px;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.historicoDetalhes {
+    display: grid;
+    gap: 3px;
+    margin-top: 9px;
 }
 
 .historicoItem small {
@@ -468,6 +541,34 @@ button:hover {
 
     .choiceCard strong {
         font-size: 18px;
+    }
+
+    .historicoSection {
+        padding: 12px;
+    }
+
+    .historicoHeader {
+        display: block;
+    }
+
+    .historicoHeader small {
+        display: block;
+        max-width: none;
+        margin-top: 6px;
+        text-align: left;
+    }
+
+    .historicoResumo {
+        grid-template-columns: 1fr;
+    }
+
+    .historicoTopo {
+        display: block;
+    }
+
+    .historicoTopo small {
+        margin-top: 3px;
+        text-align: left;
     }
 }
 

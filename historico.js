@@ -1,22 +1,13 @@
 document.addEventListener("DOMContentLoaded", ()=>{
     const lista = document.getElementById("historicoLista");
+    const listaBobina = document.getElementById("historicoBobinaLista");
+    const listaAgropainel = document.getElementById("historicoAgropainelLista");
     const status = document.getElementById("historicoStatus");
-    const salvarBobina = document.getElementById("salvarHistoricoBobina");
-    const salvarAgro = document.getElementById("salvarHistoricoAgro");
     const testarBancoBtn = document.getElementById("testarBancoBtn");
     const firebaseTesteMensagem = document.getElementById("firebaseTesteMensagem");
 
     let historicosBobina = [];
     let historicosAgropainel = [];
-
-    function texto(elemento){
-        return elemento ? elemento.innerText.trim() : "";
-    }
-
-    function numeroDoTexto(valor, padrao = 0){
-        const encontrado = String(valor || "").replace(",", ".").match(/\d+(\.\d+)?/);
-        return encontrado ? Number(encontrado[0]) : padrao;
-    }
 
     function htmlSeguro(valor){
         return String(valor ?? "").replace(/[&<>"']/g, (char)=>({
@@ -28,57 +19,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
         }[char]));
     }
 
-    function nomeUsuario(){
-        return localStorage.getItem("nomeUsuario") || "Usuario";
-    }
-
-    function botaoSelecionado(seletor, padrao){
-        const botao = document.querySelector(`${seletor} button.selecionado`);
-        return numeroDoTexto(texto(botao), padrao);
-    }
-
-    function resultadoBobina(){
-        const largura = document.getElementById("largura");
-        return {
-            tipo: "bobina",
-            produtoBobina: "Bobina",
-            larguraCm: Number(largura ? largura.value : 0),
-            espessuraMm: botaoSelecionado("#espessuras", 0.32),
-            velocidade: botaoSelecionado("#velocidades", 10),
-            metros: numeroDoTexto(texto(document.getElementById("metros"))),
-            quantidade: numeroDoTexto(texto(document.getElementById("metros"))),
-            tempoTexto: texto(document.getElementById("tempo")).replace(/^.*?(\d)/, "$1"),
-            fimHora: texto(document.getElementById("hora")).split(": ").pop(),
-            observacao: "Calculo de bobina salvo manualmente."
-        };
-    }
-
-    function resultadoAgropainel(){
-        const largura = document.getElementById("agroLargura");
-        return {
-            tipo: "agropainel",
-            produtoBobina: "Agropainel",
-            larguraCm: Number(largura ? largura.value : 0),
-            espessuraMm: 0.60,
-            velocidade: botaoSelecionado("#agroVelocidades", 10),
-            metros: numeroDoTexto(texto(document.getElementById("agroMetros"))),
-            quantidade: numeroDoTexto(texto(document.getElementById("agroMetros"))),
-            tempoTexto: texto(document.getElementById("agroTempo")).replace(/^.*?(\d)/, "$1"),
-            fimHora: texto(document.getElementById("agroHora")).split(": ").pop(),
-            observacao: "Calculo de agropainel salvo manualmente."
-        };
-    }
-
-    function detalhes(item){
-        const valores = item.valores || item.valoresDepois || item;
-        return [
-            valores.larguraCm ? `Largura ${valores.larguraCm} cm` : "",
-            valores.espessuraMm ? `Espessura ${valores.espessuraMm} mm` : "",
-            valores.velocidade ? `Velocidade ${valores.velocidade} m/min` : "",
-            item.observacao ? `Obs: ${item.observacao}` : ""
-        ].filter(Boolean).join(" | ");
-    }
-
     function timestampOrdenacao(item){
         if(item.criadoEm && typeof item.criadoEm.toDate === "function"){
             return item.criadoEm.toDate().getTime();
@@ -86,31 +26,59 @@ document.addEventListener("DOMContentLoaded", ()=>{
         return Date.parse(item.criadoEmLocal || `${item.data || ""} ${item.hora || ""}`) || 0;
     }
 
-    function renderizarHistorico(){
-        const itens = [...historicosBobina, ...historicosAgropainel]
-            .sort((a, b)=>timestampOrdenacao(b) - timestampOrdenacao(a))
-            .slice(0, 50);
+    function valorPrincipal(item, campo){
+        const valores = item.valores || item.valoresDepois || {};
+        return item[campo] ?? valores[campo] ?? "-";
+    }
 
-        if(!itens.length){
-            lista.innerHTML = "<p>Ainda nao existe historico salvo.</p>";
+    function cardHistorico(item, tipo){
+        const usuario = item.usuario || "Usuario";
+        const largura = valorPrincipal(item, "larguraCm");
+        const espessura = valorPrincipal(item, "espessuraMm");
+        const velocidade = valorPrincipal(item, "velocidade");
+        const metros = valorPrincipal(item, "metros") || valorPrincipal(item, "quantidade");
+        const tempo = valorPrincipal(item, "tempoTexto");
+        const fim = valorPrincipal(item, "fimHora");
+        const acao = item.tipoAcao || item.acaoRealizada || "calculo automatico";
+
+        return `
+            <article class="historicoItem historicoItem${tipo}">
+                <div class="historicoTopo">
+                    <strong>${htmlSeguro(tipo)}</strong>
+                    <small>${htmlSeguro(item.data || "-")} ${htmlSeguro(item.hora || "")}</small>
+                </div>
+                <span class="historicoUsuario">${htmlSeguro(usuario)}</span>
+                <div class="historicoResumo">
+                    <b>${htmlSeguro(metros)} m</b>
+                    <b>${htmlSeguro(espessura)} mm</b>
+                    <b>${htmlSeguro(velocidade)} m/min</b>
+                </div>
+                <div class="historicoDetalhes">
+                    <small>Largura: ${htmlSeguro(largura)} cm</small>
+                    <small>Tempo: ${htmlSeguro(tempo)}</small>
+                    <small>Acaba: ${htmlSeguro(fim)}</small>
+                    <small>Acao: ${htmlSeguro(acao)}</small>
+                </div>
+            </article>
+        `;
+    }
+
+    function renderizarLista(elemento, itens, tipo, vazio){
+        const ordenados = itens
+            .sort((a, b)=>timestampOrdenacao(b) - timestampOrdenacao(a))
+            .slice(0, 10);
+
+        if(!ordenados.length){
+            elemento.innerHTML = `<p>${vazio}</p>`;
             return;
         }
 
-        lista.innerHTML = itens.map((item)=>{
-            const isAgro = item.origem === "agropainel" || item.acaoRealizada;
-            const tipo = isAgro ? "Agropainel" : (item.produtoBobina || "Bobina");
-            const acao = item.acaoRealizada || item.tipoAcao || "producao";
-            const quantidade = item.quantidade ?? item.valores?.quantidade ?? item.valores?.metros ?? item.valoresDepois?.metros ?? 0;
+        elemento.innerHTML = ordenados.map((item)=>cardHistorico(item, tipo)).join("");
+    }
 
-            return `
-                <article class="historicoItem">
-                    <strong>${htmlSeguro(tipo)} - ${htmlSeguro(item.usuario || "Usuario")}</strong>
-                    <span>${htmlSeguro(acao)} | ${htmlSeguro(quantidade)} metros</span>
-                    <small>Data: ${htmlSeguro(item.data || "-")} | Hora: ${htmlSeguro(item.hora || "-")}</small>
-                    <small>${htmlSeguro(detalhes(item))}</small>
-                </article>
-            `;
-        }).join("");
+    function renderizarHistorico(){
+        renderizarLista(listaBobina, historicosBobina, "Bobina", "Nenhuma bobina salva ainda.");
+        renderizarLista(listaAgropainel, historicosAgropainel, "Agropainel", "Nenhum agropainel salvo ainda.");
     }
 
     function iniciarHistorico(){
@@ -127,7 +95,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
             renderizarHistorico();
         }, (error)=>{
             status.innerText = "Erro ao carregar historico.";
-            lista.innerHTML = `<p>${htmlSeguro(error.message || error)}</p>`;
+            listaBobina.innerHTML = `<p>${htmlSeguro(error.message || error)}</p>`;
         });
 
         window.AtlasFirebase.observarHistoricoAgropainel((itens)=>{
@@ -136,50 +104,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
             renderizarHistorico();
         }, (error)=>{
             status.innerText = "Erro ao carregar historico do Agropainel.";
-            lista.innerHTML = `<p>${htmlSeguro(error.message || error)}</p>`;
+            listaAgropainel.innerHTML = `<p>${htmlSeguro(error.message || error)}</p>`;
         });
-    }
-
-    async function salvarBobinaFirestore(resultado, observacao){
-        if(!window.AtlasFirebase){
-            status.innerText = "Firebase nao carregado.";
-            return;
-        }
-
-        status.innerText = "A salvar...";
-        try{
-            await window.AtlasFirebase.salvarCalculoBobina({
-                ...resultado,
-                usuario: nomeUsuario(),
-                acao: "producao",
-                observacao: observacao || resultado.observacao
-            });
-            status.innerText = "Salvo no historico_bobina.";
-        }catch(error){
-            status.innerText = `Erro ao salvar: ${error.message || error}`;
-        }
-    }
-
-    async function salvarAgropainelFirestore(resultado, observacao){
-        if(!window.AtlasFirebase){
-            status.innerText = "Firebase nao carregado.";
-            return;
-        }
-
-        status.innerText = "A salvar...";
-        try{
-            const antes = JSON.parse(localStorage.getItem("ultimoAgropainel") || "null");
-            await window.AtlasFirebase.salvarCalculoAgropainel({
-                ...resultado,
-                usuario: nomeUsuario(),
-                acao: "producao",
-                observacao: observacao || resultado.observacao
-            }, antes);
-            localStorage.setItem("ultimoAgropainel", JSON.stringify(resultado));
-            status.innerText = "Salvo no historico_agropainel.";
-        }catch(error){
-            status.innerText = `Erro ao salvar: ${error.message || error}`;
-        }
     }
 
     async function testarBanco(){
@@ -199,16 +125,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         }
     }
 
-    salvarBobina.addEventListener("click", ()=>salvarBobinaFirestore(resultadoBobina()));
-    salvarAgro.addEventListener("click", ()=>salvarAgropainelFirestore(resultadoAgropainel()));
     testarBancoBtn.addEventListener("click", testarBanco);
-
-    window.AtlasHistorico = {
-        resultadoBobina,
-        resultadoAgropainel,
-        salvarBobinaFirestore,
-        salvarAgropainelFirestore
-    };
 
     iniciarHistorico();
 });

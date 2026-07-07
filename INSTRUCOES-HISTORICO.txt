@@ -38,6 +38,15 @@ A colecao historico_agropainel registra:
 - Valores antes e depois da alteracao
 - Usuario
 
+O historico agora e salvo automaticamente quando o usuario calcula Bobina ou Agropainel.
+Os botoes manuais de salvar foram removidos.
+
+Cada colecao mantem somente os 10 historicos mais recentes.
+Ao gravar um novo historico, o sistema tenta apagar automaticamente os registros mais antigos e a lista vai se renovando.
+
+Na tela, Bobinas e Agropainel aparecem separados para facilitar a leitura no celular.
+Cada cartao mostra nome do usuario, metros, mm da chapa, velocidade, largura, data e hora.
+
 O botao "Testar Banco de Dados" cria e le um documento na colecao testes_banco.
 Se a leitura funcionar, a tela mostra a mensagem verde de sucesso.
 Se houver erro de regra, conexao ou configuracao, a mensagem completa aparece em vermelho.
