@@ -301,6 +301,11 @@ button:hover {
     box-sizing: border-box;
 }
 
+.salvarHistoricoBtn {
+    margin: 18px 0 0;
+    background: #2d3f5f;
+}
+
 #metros,
 #agroMetros {
     font-size: 28px;

@@ -96,7 +96,7 @@
                 usuario: item.usuario,
                 produtoBobina: "Bobina",
                 quantidade: item.metros,
-                observacao: "Salvo automaticamente na aba Bobina."
+                observacao: "Salvo manualmente na aba Bobina."
             });
         }catch(error){
             console.error("Erro ao salvar Historico Bobina no Firebase:", error);
@@ -127,12 +127,34 @@
             ultimaAssinatura = assinaturaAtual;
             renderizarHistorico();
             const status = elementoStatus();
-            if(status) status.innerText = "Salvo automaticamente";
+            if(status) status.innerText = "Salvo no histórico";
             salvarNoFirebase(dados, item);
             return true;
         }catch(error){
             console.error("Erro ao salvar Historico Bobina:", error);
             return false;
+        }
+    }
+
+    function salvarCalculoAtual(){
+        const status = elementoStatus();
+        const dados = window.AtlasCalculoBobinaAtual;
+
+        if(!calculoValido(dados)){
+            if(status) status.innerText = "Faça um cálculo antes de salvar";
+            return;
+        }
+
+        const salvou = salvarHistorico(dados);
+        if(!salvou && status){
+            status.innerText = "Este cálculo já foi salvo";
+        }
+    }
+
+    function prepararBotao(){
+        const botao = document.getElementById("salvarBobinaHistoricoBtn");
+        if(botao){
+            botao.addEventListener("click", salvarCalculoAtual);
         }
     }
 
@@ -144,6 +166,8 @@
         chave: CHAVE_HISTORICO_BOBINA
     };
 
-    window.addEventListener("atlas:bobina-calculada", (event)=>salvarHistorico(event.detail || {}));
-    document.addEventListener("DOMContentLoaded", renderizarHistorico);
+    document.addEventListener("DOMContentLoaded", ()=>{
+        prepararBotao();
+        renderizarHistorico();
+    });
 })();

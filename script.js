@@ -278,7 +278,7 @@ function start(){
         document.getElementById("tempo").innerText = t.tempo + textoTempo
         document.getElementById("hora").innerText = t.acaba + fim.toLocaleTimeString()
         if(telaAtual === "bobina" && espessuraSelecionada && velocidadeSelecionada && metros > 0 && textoTempo && fim){
-            const dadosHistorico = {
+            window.AtlasCalculoBobinaAtual = {
                 usuario: nome,
                 larguraCm: largura_cm,
                 espessuraMm: espSel,
@@ -287,10 +287,6 @@ function start(){
                 tempoTexto,
                 fimHora: fim.toLocaleTimeString()
             }
-            if(window.AtlasHistoricoBobina && typeof window.AtlasHistoricoBobina.salvar === "function"){
-                window.AtlasHistoricoBobina.salvar(dadosHistorico)
-            }
-            window.dispatchEvent(new CustomEvent("atlas:bobina-calculada", { detail: dadosHistorico }))
         }
     }
 
