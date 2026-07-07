@@ -1,8 +1,14 @@
-document.addEventListener("DOMContentLoaded", ()=>{
-    const lista = document.getElementById("historicoAgropainelLista");
-    const status = document.getElementById("historicoAgropainelStatus");
-    const chave = "atlas_historico_agropainel";
+(function(){
+    const CHAVE_HISTORICO_AGROPAINEL = "atlas_historico_agropainel";
     let ultimaAssinatura = "";
+
+    function elementoLista(){
+        return document.getElementById("historicoAgropainelLista");
+    }
+
+    function elementoStatus(){
+        return document.getElementById("historicoAgropainelStatus");
+    }
 
     function htmlSeguro(valor){
         return String(valor ?? "").replace(/[&<>"']/g, (char)=>({
@@ -26,21 +32,71 @@ document.addEventListener("DOMContentLoaded", ()=>{
         return `${data.toLocaleDateString("pt-PT")} ${data.toLocaleTimeString("pt-PT", {hour:"2-digit", minute:"2-digit"})}`;
     }
 
-    function carregar(){
+    function numeroDoTexto(valor){
+        const encontrado = String(valor || "").replace(",", ".").match(/\d+(\.\d+)?/);
+        return encontrado ? Number(encontrado[0]) : 0;
+    }
+
+    function textoElemento(id){
+        const elemento = document.getElementById(id);
+        return elemento ? elemento.innerText.trim() : "";
+    }
+
+    function assinatura(item){
+        return JSON.stringify({
+            usuario: item.usuario,
+            espessuraMm: Number(item.espessuraMm || 0),
+            velocidade: Number(item.velocidade || 0),
+            metros: Number(item.metros || 0)
+        });
+    }
+
+    function calculoValido(dados){
+        return Boolean(
+            dados &&
+            Number(dados.espessuraMm) > 0 &&
+            Number(dados.velocidade) > 0 &&
+            Number(dados.metros) > 0 &&
+            dados.tempoTexto &&
+            dados.fimHora
+        );
+    }
+
+    function coletarCalculoDaTela(){
+        const velocidadeSelecionada = document.querySelector("#agroVelocidades button.selecionado");
+        const metrosTexto = textoElemento("agroMetros");
+        const tempoTextoCompleto = textoElemento("agroTempo");
+        const horaTextoCompleto = textoElemento("agroHora");
+
+        return {
+            usuario: localStorage.getItem("nomeUsuario") || "Usuario",
+            espessuraMm: 0.60,
+            velocidade: numeroDoTexto(velocidadeSelecionada ? velocidadeSelecionada.innerText : ""),
+            metros: numeroDoTexto(metrosTexto),
+            tempoTexto: tempoTextoCompleto.replace(/^.*?(\d)/, "$1"),
+            fimHora: horaTextoCompleto.split(": ").pop()
+        };
+    }
+
+    function carregarHistorico(){
         try{
-            return JSON.parse(localStorage.getItem(chave) || "[]");
+            const historico = JSON.parse(localStorage.getItem(CHAVE_HISTORICO_AGROPAINEL) || "[]");
+            return Array.isArray(historico) ? historico : [];
         }catch(error){
+            console.error("Erro ao carregar Historico Agropainel:", error);
             return [];
         }
     }
 
-    function gravar(itens){
-        localStorage.setItem(chave, JSON.stringify(itens.slice(0, 10)));
+    function gravarHistorico(itens){
+        localStorage.setItem(CHAVE_HISTORICO_AGROPAINEL, JSON.stringify(itens.slice(0, 10)));
     }
 
-    function renderizar(){
-        const itens = carregar();
+    function renderizarHistorico(){
+        const lista = elementoLista();
+        if(!lista) return;
 
+        const itens = carregarHistorico();
         if(!itens.length){
             lista.innerHTML = "<p>Nenhum agropainel salvo ainda.</p>";
             return;
@@ -57,56 +113,89 @@ document.addEventListener("DOMContentLoaded", ()=>{
         `).join("");
     }
 
-    function salvarLocal(dados){
-        if(!dados || !dados.espessuraMm || !dados.velocidade || !dados.metros) return;
+    async function salvarNoFirebase(dados, item, anterior){
+        if(!window.AtlasFirebase) return;
 
-        const item = {
-            usuario: dados.usuario || localStorage.getItem("nomeUsuario") || "Usuario",
-            criadoEmLocal: new Date().toISOString(),
-            espessuraMm: Number(dados.espessuraMm || 0.60),
-            velocidade: Number(dados.velocidade || 0),
-            metros: Number(dados.metros || 0)
-        };
-        const assinatura = JSON.stringify({
-            usuario: item.usuario,
-            espessuraMm: item.espessuraMm,
-            velocidade: item.velocidade,
-            metros: item.metros
-        });
-        const ultimo = carregar()[0];
-        const ultimaAssinaturaSalva = ultimo ? JSON.stringify({
-            usuario: ultimo.usuario,
-            espessuraMm: Number(ultimo.espessuraMm || 0),
-            velocidade: Number(ultimo.velocidade || 0),
-            metros: Number(ultimo.metros || 0)
-        }) : "";
-
-        if(assinatura === ultimaAssinatura || assinatura === ultimaAssinaturaSalva) return;
-        ultimaAssinatura = assinatura;
-
-        const anterior = carregar()[0] || null;
-        gravar([item, ...carregar()]);
-        renderizar();
-        if(status) status.innerText = "Salvo automaticamente";
-
-        if(window.AtlasFirebase){
-            window.AtlasFirebase.registrarHistoricoAgropainel("calculo automatico", anterior, {
+        try{
+            await window.AtlasFirebase.registrarHistoricoAgropainel("calculo manual", anterior, {
                 ...dados,
                 usuario: item.usuario,
                 produtoBobina: "Agropainel",
                 quantidade: item.metros,
-                observacao: "Salvo automaticamente na aba Agropainel."
-            }, item.usuario).catch(()=>{});
+                observacao: "Salvo manualmente na aba Agropainel."
+            }, item.usuario);
+        }catch(error){
+            console.error("Erro ao salvar Historico Agropainel no Firebase:", error);
+        }
+    }
+
+    function salvarHistorico(dados){
+        if(!calculoValido(dados)) return false;
+
+        const item = {
+            usuario: dados.usuario || localStorage.getItem("nomeUsuario") || "Usuario",
+            criadoEmLocal: new Date().toISOString(),
+            espessuraMm: Number(dados.espessuraMm),
+            velocidade: Number(dados.velocidade),
+            metros: Number(dados.metros)
+        };
+
+        const historicoAtual = carregarHistorico();
+        const assinaturaAtual = assinatura(item);
+        const assinaturaUltimoSalvo = historicoAtual[0] ? assinatura(historicoAtual[0]) : "";
+
+        if(assinaturaAtual === ultimaAssinatura || assinaturaAtual === assinaturaUltimoSalvo){
+            return false;
+        }
+
+        try{
+            gravarHistorico([item, ...historicoAtual]);
+            ultimaAssinatura = assinaturaAtual;
+            renderizarHistorico();
+            const status = elementoStatus();
+            if(status) status.innerText = "Salvo no histórico";
+            salvarNoFirebase(dados, item, historicoAtual[0] || null);
+            return true;
+        }catch(error){
+            console.error("Erro ao salvar Historico Agropainel:", error);
+            return false;
+        }
+    }
+
+    function salvarCalculoAtual(){
+        const status = elementoStatus();
+        const dados = calculoValido(window.AtlasCalculoAgropainelAtual)
+            ? window.AtlasCalculoAgropainelAtual
+            : coletarCalculoDaTela();
+
+        if(!calculoValido(dados)){
+            if(status) status.innerText = "Faça um cálculo antes de salvar";
+            return;
+        }
+
+        const salvou = salvarHistorico(dados);
+        if(!salvou && status){
+            status.innerText = "Este cálculo já foi salvo";
+        }
+    }
+
+    function prepararBotao(){
+        const botao = document.getElementById("salvarAgropainelHistoricoBtn");
+        if(botao){
+            botao.addEventListener("click", salvarCalculoAtual);
         }
     }
 
     window.AtlasHistoricoAgropainel = {
-        salvar: salvarLocal,
-        renderizar,
-        carregar
+        salvar: salvarHistorico,
+        salvarHistorico,
+        carregarHistorico,
+        renderizarHistorico,
+        chave: CHAVE_HISTORICO_AGROPAINEL
     };
 
-    window.addEventListener("atlas:agropainel-calculado", (event)=>salvarLocal(event.detail || {}));
-
-    renderizar();
-});
+    document.addEventListener("DOMContentLoaded", ()=>{
+        prepararBotao();
+        renderizarHistorico();
+    });
+})();

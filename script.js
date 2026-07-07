@@ -310,7 +310,7 @@ function start(){
         document.getElementById("agroTempo").innerText = t.tempo + textoTempo
         document.getElementById("agroHora").innerText = t.acaba + fim.toLocaleTimeString()
         if(telaAtual === "agro"){
-            const dadosHistorico = {
+            window.AtlasCalculoAgropainelAtual = {
                 usuario: nome,
                 larguraCm: largura_cm,
                 espessuraMm: espessura,
@@ -319,10 +319,6 @@ function start(){
                 tempoTexto,
                 fimHora: fim.toLocaleTimeString()
             }
-            if(window.AtlasHistoricoAgropainel && typeof window.AtlasHistoricoAgropainel.salvar === "function"){
-                window.AtlasHistoricoAgropainel.salvar(dadosHistorico)
-            }
-            window.dispatchEvent(new CustomEvent("atlas:agropainel-calculado", { detail: dadosHistorico }))
         }
     }
 

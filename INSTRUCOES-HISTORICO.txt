@@ -20,7 +20,6 @@ Colecoes usadas no Cloud Firestore:
 - calculos_agropainel
 - historico_bobina
 - historico_agropainel
-- testes_banco
 
 A colecao historico_bobina registra:
 
@@ -40,21 +39,18 @@ A colecao historico_agropainel registra:
 - Valores antes e depois da alteracao
 - Usuario
 
-O historico agora e salvo automaticamente quando o usuario calcula Bobina ou Agropainel.
-Os botoes manuais de salvar foram removidos.
+O historico agora e salvo manualmente pelo botao de cada calculadora.
+Na aba Bobina existe o botao "Salvar Bobina no historico".
+Na aba Agropainel existe o botao "Salvar Agropainel no historico".
 
 Cada historico local mantem somente os 10 calculos mais recentes.
 O sistema tambem tenta gravar os dados no Firebase quando o banco estiver disponivel.
 
-Na tela inicial fica apenas o botao de teste do banco.
+O botao "Testar Banco de Dados" foi removido da tela inicial.
 Na aba Bobina aparece somente o Historico Bobina.
 Na aba Agropainel aparece somente o Historico Agropainel.
 Cada cartao mostra apenas nome do usuario, data e hora, mm da chapa, velocidade e metros.
 
-Na Bobina, o historico so grava depois que o usuario seleciona uma espessura e uma velocidade.
+Na Bobina, o historico so grava depois que o usuario seleciona uma espessura, uma velocidade e clica em salvar.
+No Agropainel, o historico so grava depois que o usuario seleciona uma velocidade e clica em salvar.
 Calculos repetidos com os mesmos dados nao geram duplicatas.
-O botao "Testar Banco de Dados" possui tempo limite e sempre mostra sucesso, erro ou banco nao configurado.
-
-O botao "Testar Banco de Dados" cria e le um documento na colecao testes_banco.
-Se a leitura funcionar, a tela mostra a mensagem verde de sucesso.
-Se houver erro de regra, conexao ou configuracao, a mensagem completa aparece em vermelho.
