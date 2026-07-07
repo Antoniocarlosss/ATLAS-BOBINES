@@ -98,6 +98,13 @@ gtag('config', 'G-J6VCHDN4X2');
     </button>
 </section>
 
+<section id="bancoTesteSection" class="historicoSection bancoTesteSection">
+    <div class="historicoActions">
+        <button id="testarBancoBtn" type="button">Testar Banco de Dados</button>
+    </div>
+    <div id="firebaseTesteMensagem" class="firebaseTesteMensagem" aria-live="polite"></div>
+</section>
+
 <section id="bobinaCalculator" class="calculatorSection" style="display:none;">
 <button id="voltarBobinaBtn" type="button" class="backChoiceBtn">Voltar para opcoes</button>
 
@@ -116,6 +123,19 @@ gtag('config', 'G-J6VCHDN4X2');
     <h3 id="tempo"></h3>
     <h3 id="hora"></h3>
 </div>
+
+<section id="historicoBobinaSection" class="historicoSection">
+    <div class="historicoHeader">
+        <div>
+            <span>Historico Bobina</span>
+            <h3>Ultimos 10 calculos</h3>
+        </div>
+        <small id="historicoBobinaStatus">Salvo automaticamente</small>
+    </div>
+    <div id="historicoBobinaLista" class="historicoLista historicoCompacto">
+        <p>Nenhum historico de bobina carregado.</p>
+    </div>
+</section>
 
 </section>
 
@@ -138,37 +158,19 @@ gtag('config', 'G-J6VCHDN4X2');
     <h3 id="agroTempo"></h3>
     <h3 id="agroHora"></h3>
 </div>
-</section>
 
-<section id="historicoSection" class="historicoSection">
+<section id="historicoAgropainelSection" class="historicoSection">
     <div class="historicoHeader">
         <div>
-            <span>Historico online automatico</span>
+            <span>Historico Agropainel</span>
             <h3>Ultimos 10 calculos</h3>
         </div>
-        <small id="historicoStatus">A ligar ao historico...</small>
+        <small id="historicoAgropainelStatus">Salvo automaticamente</small>
     </div>
-
-    <div class="historicoActions">
-        <button id="testarBancoBtn" type="button">Testar Banco de Dados</button>
+    <div id="historicoAgropainelLista" class="historicoLista historicoCompacto">
+        <p>Nenhum historico de agropainel carregado.</p>
     </div>
-
-    <div id="firebaseTesteMensagem" class="firebaseTesteMensagem" aria-live="polite"></div>
-
-    <div id="historicoLista" class="historicoLista historicoDuasListas">
-        <section class="historicoGrupo">
-            <h4>Bobinas</h4>
-            <div id="historicoBobinaLista">
-                <p>Nenhum historico de bobina carregado.</p>
-            </div>
-        </section>
-        <section class="historicoGrupo">
-            <h4>Agropainel</h4>
-            <div id="historicoAgropainelLista">
-                <p>Nenhum historico de agropainel carregado.</p>
-            </div>
-        </section>
-    </div>
+</section>
 </section>
 
 <button id="resetUser">Trocar usuario</button>
@@ -177,6 +179,8 @@ gtag('config', 'G-J6VCHDN4X2');
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics-compat.js"></script>
 <script src="firebase.js"></script>
+<script src="historicoBobina.js"></script>
+<script src="historicoAgropainel.js"></script>
 <script src="script.js"></script>
 <script src="historico.js"></script>
 </div>

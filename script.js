@@ -8,6 +8,7 @@ const entrar = document.getElementById("entrarBtn")
 const resetBtn = document.getElementById("resetUser")
 const nomeErro = document.getElementById("nomeErro")
 const calculatorChoice = document.getElementById("calculatorChoice")
+const bancoTesteSection = document.getElementById("bancoTesteSection")
 const bobinaCalculator = document.getElementById("bobinaCalculator")
 const agropainelCalculator = document.getElementById("agropainelCalculator")
 const abrirBobinaBtn = document.getElementById("abrirBobinaBtn")
@@ -19,10 +20,6 @@ const labelIdiomaAtual = document.getElementById("labelIdiomaAtual")
 
 let nome = localStorage.getItem("nomeUsuario")
 let idioma = localStorage.getItem("idiomaUsuario") || "pt"
-let salvarBobinaTimer = null
-let salvarAgropainelTimer = null
-let ultimaBobinaAssinatura = ""
-let ultimoAgropainelAutomatico = null
 
 async function salvarUsuarioFirebase(){
     if(!window.AtlasFirebase || !nome) return
@@ -32,55 +29,6 @@ async function salvarUsuarioFirebase(){
     }catch(error){
         console.error("Erro ao salvar usuario no Firebase:", error)
     }
-}
-
-function salvarBobinaAutomaticamente(payload){
-    if(!window.AtlasFirebase || !payload.metros) return
-
-    const assinatura = JSON.stringify(payload)
-    if(assinatura === ultimaBobinaAssinatura) return
-    ultimaBobinaAssinatura = assinatura
-
-    clearTimeout(salvarBobinaTimer)
-    salvarBobinaTimer = setTimeout(async ()=>{
-        try{
-            await window.AtlasFirebase.registrarHistoricoBobina("calculo automatico", {
-                ...payload,
-                usuario: nome,
-                produtoBobina: "Bobina",
-                quantidade: payload.metros,
-                observacao: "Salvo automaticamente ao calcular bobina."
-            })
-        }catch(error){
-            console.error("Erro ao registrar historico_bobina:", error)
-        }
-    }, 1200)
-}
-
-function salvarAgropainelAutomaticamente(payload){
-    if(!window.AtlasFirebase || !payload.metros) return
-
-    const assinatura = JSON.stringify(payload)
-    const assinaturaAnterior = ultimoAgropainelAutomatico ? JSON.stringify(ultimoAgropainelAutomatico) : ""
-    if(assinatura === assinaturaAnterior) return
-
-    const antes = ultimoAgropainelAutomatico
-    ultimoAgropainelAutomatico = payload
-
-    clearTimeout(salvarAgropainelTimer)
-    salvarAgropainelTimer = setTimeout(async ()=>{
-        try{
-            await window.AtlasFirebase.registrarHistoricoAgropainel("calculo automatico", antes, {
-                ...payload,
-                usuario: nome,
-                produtoBobina: "Agropainel",
-                quantidade: payload.metros,
-                observacao: "Salvo automaticamente ao calcular agropainel."
-            }, nome)
-        }catch(error){
-            console.error("Erro ao registrar historico_agropainel:", error)
-        }
-    }, 1200)
 }
 
 const textos = {
@@ -193,6 +141,7 @@ function start(){
         telaAtual = "escolha"
         document.getElementById("tituloPrograma").innerText = t.escolha
         calculatorChoice.style.display = "grid"
+        bancoTesteSection.style.display = "block"
         bobinaCalculator.style.display = "none"
         agropainelCalculator.style.display = "none"
     }
@@ -201,6 +150,7 @@ function start(){
         telaAtual = "bobina"
         document.getElementById("tituloPrograma").innerText = t.titulo
         calculatorChoice.style.display = "none"
+        bancoTesteSection.style.display = "none"
         bobinaCalculator.style.display = "block"
         agropainelCalculator.style.display = "none"
         calc()
@@ -210,6 +160,7 @@ function start(){
         telaAtual = "agro"
         document.getElementById("tituloPrograma").innerText = t.agro
         calculatorChoice.style.display = "none"
+        bancoTesteSection.style.display = "none"
         bobinaCalculator.style.display = "none"
         agropainelCalculator.style.display = "block"
         calcAgropainel()
@@ -329,14 +280,15 @@ function start(){
         document.getElementById("tempo").innerText = t.tempo + textoTempo
         document.getElementById("hora").innerText = t.acaba + fim.toLocaleTimeString()
         if(telaAtual === "bobina"){
-            salvarBobinaAutomaticamente({
+            window.dispatchEvent(new CustomEvent("atlas:bobina-calculada", { detail: {
+                usuario: nome,
                 larguraCm: largura_cm,
                 espessuraMm: espSel,
                 velocidade: velSel,
                 metros,
                 tempoTexto,
                 fimHora: fim.toLocaleTimeString()
-            })
+            }}))
         }
     }
 
@@ -360,14 +312,15 @@ function start(){
         document.getElementById("agroTempo").innerText = t.tempo + textoTempo
         document.getElementById("agroHora").innerText = t.acaba + fim.toLocaleTimeString()
         if(telaAtual === "agro"){
-            salvarAgropainelAutomaticamente({
+            window.dispatchEvent(new CustomEvent("atlas:agropainel-calculado", { detail: {
+                usuario: nome,
                 larguraCm: largura_cm,
                 espessuraMm: espessura,
                 velocidade: agroVelSel,
                 metros,
                 tempoTexto,
                 fimHora: fim.toLocaleTimeString()
-            })
+            }}))
         }
     }
 

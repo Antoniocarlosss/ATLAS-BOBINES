@@ -358,6 +358,11 @@ button:hover {
     background: #006d5b;
 }
 
+#testarBancoBtn:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
 .firebaseTesteMensagem {
     display: none;
     margin: 0 0 14px;
@@ -368,7 +373,9 @@ button:hover {
 }
 
 .firebaseTesteMensagem.sucesso,
-.firebaseTesteMensagem.erro {
+.firebaseTesteMensagem.erro,
+.firebaseTesteMensagem.aviso,
+.firebaseTesteMensagem.carregando {
     display: block;
 }
 
@@ -383,6 +390,13 @@ button:hover {
     border: 1px solid rgba(255, 107, 107, 0.55);
     color: #ff9b9b;
     white-space: pre-wrap;
+}
+
+.firebaseTesteMensagem.aviso,
+.firebaseTesteMensagem.carregando {
+    background: rgba(255, 213, 79, 0.12);
+    border: 1px solid rgba(255, 213, 79, 0.48);
+    color: #ffd54f;
 }
 
 .historicoLista {
@@ -497,6 +511,37 @@ button:hover {
     margin-top: 4px;
     color: #c4d0d9;
     line-height: 1.35;
+}
+
+.historicoCompacto {
+    gap: 7px;
+}
+
+.historicoItemCompacto {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4px 8px;
+    padding: 9px 10px;
+}
+
+.historicoItemCompacto strong {
+    grid-column: 1;
+    font-size: 15px;
+}
+
+.historicoItemCompacto small {
+    grid-column: 2;
+    margin: 0;
+    color: #9fb5c8;
+    font-size: 12px;
+    text-align: right;
+}
+
+.historicoItemCompacto span {
+    margin: 0;
+    color: #c4d0d9;
+    font-size: 13px;
+    line-height: 1.25;
 }
 
 #tempo,

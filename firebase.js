@@ -20,7 +20,7 @@ window.ATLAS_FIREBASE_CONFIG = {
 
     function iniciarFirebase(){
         if(!window.firebase){
-            throw new Error("SDK do Firebase nao carregado. Verifique a conexao com a internet.");
+            return { db: null, analytics: null };
         }
 
         if(!window.firebase.apps.length){
@@ -121,6 +121,8 @@ window.ATLAS_FIREBASE_CONFIG = {
     }
 
     async function manterSomenteUltimosDez(nomeColecao){
+        if(!firebaseApp.db) return;
+
         const snapshot = await firebaseApp.db.collection(nomeColecao)
             .orderBy("criadoEm", "desc")
             .get();
@@ -133,6 +135,10 @@ window.ATLAS_FIREBASE_CONFIG = {
     }
 
     async function registrarHistoricoBobina(acao, dados = {}){
+        if(!firebaseApp.db){
+            throw new Error("Banco de dados nao configurado.");
+        }
+
         const historico = montarHistoricoBobina(acao, dados);
         const doc = await firebaseApp.db.collection(COLECOES.historicoBobina).add(historico);
         try{
@@ -144,6 +150,10 @@ window.ATLAS_FIREBASE_CONFIG = {
     }
 
     async function registrarHistoricoAgropainel(acao, antes = null, depois = null, usuario){
+        if(!firebaseApp.db){
+            throw new Error("Banco de dados nao configurado.");
+        }
+
         const historico = montarHistoricoAgropainel(acao, antes, depois, usuario);
         const doc = await firebaseApp.db.collection(COLECOES.historicoAgropainel).add(historico);
         try{
@@ -155,6 +165,8 @@ window.ATLAS_FIREBASE_CONFIG = {
     }
 
     async function salvarUsuario(dados){
+        if(!firebaseApp.db) return null;
+
         const usuario = limparIndefinidos({
             nome: dados.nome,
             idioma: dados.idioma,
@@ -167,6 +179,10 @@ window.ATLAS_FIREBASE_CONFIG = {
     }
 
     async function salvarCalculoBobina(dados){
+        if(!firebaseApp.db){
+            throw new Error("Banco de dados nao configurado.");
+        }
+
         const payload = limparIndefinidos({
             ...dados,
             usuario: dados.usuario || usuarioAtual(),
@@ -185,6 +201,10 @@ window.ATLAS_FIREBASE_CONFIG = {
     }
 
     async function salvarCalculoAgropainel(dados, antes = null){
+        if(!firebaseApp.db){
+            throw new Error("Banco de dados nao configurado.");
+        }
+
         const payload = limparIndefinidos({
             ...dados,
             usuario: dados.usuario || usuarioAtual(),
@@ -198,6 +218,11 @@ window.ATLAS_FIREBASE_CONFIG = {
     }
 
     function observarHistoricos(callback, onError){
+        if(!firebaseApp.db){
+            callback([]);
+            return ()=>{};
+        }
+
         return firebaseApp.db.collection(COLECOES.historicoBobina)
             .orderBy("criadoEm", "desc")
             .limit(10)
@@ -207,6 +232,11 @@ window.ATLAS_FIREBASE_CONFIG = {
     }
 
     function observarHistoricoAgropainel(callback, onError){
+        if(!firebaseApp.db){
+            callback([]);
+            return ()=>{};
+        }
+
         return firebaseApp.db.collection(COLECOES.historicoAgropainel)
             .orderBy("criadoEm", "desc")
             .limit(10)
@@ -216,6 +246,12 @@ window.ATLAS_FIREBASE_CONFIG = {
     }
 
     async function testarBanco(){
+        if(!window.firebase || !firebaseApp.db){
+            const error = new Error("Banco de dados não configurado.");
+            error.code = "not-configured";
+            throw error;
+        }
+
         const teste = {
             mensagem: "Teste de conexao Firebase ATLAS BOBINES",
             usuario: usuarioAtual(),
