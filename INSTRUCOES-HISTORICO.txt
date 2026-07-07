@@ -1,34 +1,43 @@
-Arquivos alterados para colocar o historico online:
+Firebase e historico online
+
+Arquivos principais alterados:
 
 - index.html
 - style.css
 - firebase.js
+- script.js
 - historico.js
 
-Como ativar o historico para todos os usuarios:
+O projeto ja contem a configuracao Firebase informada no pedido.
+Para funcionar online, publique estes arquivos em um servidor HTTPS ou no GitHub Pages e mantenha o Firestore Database ativo no projeto atlas-bobina.
 
-1. Crie ou abra um projeto no Firebase.
-2. Ative o Firestore Database.
-3. Copie a configuracao Web do Firebase.
-4. Cole os valores dentro de firebase.js em ATLAS_FIREBASE_CONFIG.
-5. Envie estes quatro arquivos para a raiz do repositorio ATLAS-BOBINES.
+Colecoes usadas no Cloud Firestore:
 
-O historico sera salvo na colecao:
+- usuarios
+- calculos_bobina
+- calculos_agropainel
+- historico_bobina
+- historico_agropainel
+- testes_banco
 
-atlas_bobines_historico
+A colecao historico_bobina registra:
 
-Cada registro guarda:
+- Data
+- Hora
+- Tipo da acao
+- Usuario
+- Produto/Bobina
+- Quantidade
+- Observacao
 
-- nome do usuario
-- data
-- hora
-- tipo: Bobina ou Bobina Agropainel
-- largura
-- espessura
-- velocidade
-- metros
-- tempo previsto
-- hora prevista de fim
+A colecao historico_agropainel registra:
 
-Observacao:
-Nesta sessao, o GitHub bloqueou escrita com erro 403 Resource not accessible by integration. Por isso os arquivos ficaram prontos em outputs, mas nao foram publicados automaticamente no repositorio.
+- Data
+- Hora
+- Acao realizada
+- Valores antes e depois da alteracao
+- Usuario
+
+O botao "Testar Banco de Dados" cria e le um documento na colecao testes_banco.
+Se a leitura funcionar, a tela mostra a mensagem verde de sucesso.
+Se houver erro de regra, conexao ou configuracao, a mensagem completa aparece em vermelho.

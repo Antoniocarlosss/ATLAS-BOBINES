@@ -19,6 +19,63 @@ const labelIdiomaAtual = document.getElementById("labelIdiomaAtual")
 
 let nome = localStorage.getItem("nomeUsuario")
 let idioma = localStorage.getItem("idiomaUsuario") || "pt"
+let salvarBobinaTimer = null
+let salvarAgropainelTimer = null
+let ultimaBobinaAssinatura = ""
+let ultimoAgropainelAutomatico = null
+
+async function salvarUsuarioFirebase(){
+    if(!window.AtlasFirebase || !nome) return
+
+    try{
+        await window.AtlasFirebase.salvarUsuario({ nome, idioma })
+    }catch(error){
+        console.error("Erro ao salvar usuario no Firebase:", error)
+    }
+}
+
+function salvarBobinaAutomaticamente(payload){
+    if(!window.AtlasFirebase || !payload.metros) return
+
+    const assinatura = JSON.stringify(payload)
+    if(assinatura === ultimaBobinaAssinatura) return
+    ultimaBobinaAssinatura = assinatura
+
+    clearTimeout(salvarBobinaTimer)
+    salvarBobinaTimer = setTimeout(async ()=>{
+        try{
+            await window.AtlasFirebase.registrarHistoricoBobina("alteracao_estoque", {
+                ...payload,
+                usuario: nome,
+                produtoBobina: "Bobina",
+                quantidade: payload.metros,
+                observacao: "Alteracao automatica causada por novo calculo de bobina."
+            })
+        }catch(error){
+            console.error("Erro ao registrar historico_bobina:", error)
+        }
+    }, 1200)
+}
+
+function salvarAgropainelAutomaticamente(payload){
+    if(!window.AtlasFirebase || !payload.metros) return
+
+    const assinatura = JSON.stringify(payload)
+    const assinaturaAnterior = ultimoAgropainelAutomatico ? JSON.stringify(ultimoAgropainelAutomatico) : ""
+    if(assinatura === assinaturaAnterior) return
+
+    const antes = ultimoAgropainelAutomatico
+    ultimoAgropainelAutomatico = payload
+
+    clearTimeout(salvarAgropainelTimer)
+    salvarAgropainelTimer = setTimeout(async ()=>{
+        try{
+            await window.AtlasFirebase.registrarHistoricoAgropainel("alteracao", antes, payload, nome)
+        }catch(error){
+            console.error("Erro ao registrar historico_agropainel:", error)
+        }
+    }, 1200)
+}
 
 const textos = {
     pt:{escolha:"Escolha a calculadora",titulo:"Calculadora de Bobina",bobina:"Calculadora Bobina",bobinaSub:"Calculo padrao de bobinas",agro:"Calculadora Agropainel",agroSub:"Espessura fixa 0.60 mm | Interno 200",idioma:"Idioma",largura:"Largura da bobina externa (cm)",agroLargura:"Largura da aba (cm)",espessura:"Espessura da chapa (mm)",velocidade:"Velocidade da maquina (m/min)",falta:"Falta para acabar: ",tempo:"Falta ",acaba:"Provavelmente acaba as: ",trocar:"Trocar usuario",voltar:"Voltar para opcoes",primeiro:"Primeiro acesso",bomDia:"Bom dia",boaTarde:"Boa tarde",boaNoite:"Boa noite",ultimo:"Ultimo acesso"},
@@ -68,6 +125,7 @@ if(nome){
         idioma = idiomaSelect.value
         localStorage.setItem("nomeUsuario", nome)
         localStorage.setItem("idiomaUsuario", idioma)
+        salvarUsuarioFirebase()
         showMain()
     }
     entrar.onclick = entrarNoApp
@@ -118,6 +176,7 @@ function start(){
     function trocarIdioma(novoIdioma){
         idioma = textos[novoIdioma] ? novoIdioma : "pt"
         localStorage.setItem("idiomaUsuario", idioma)
+        salvarUsuarioFirebase()
         aplicarIdioma()
         atualizarSaudacao()
         calc()
@@ -172,6 +231,7 @@ function start(){
     atualizarSaudacao()
     window.addEventListener("beforeunload", ()=>{
         localStorage.setItem("ultimo", new Date().toLocaleString())
+        salvarUsuarioFirebase()
     })
 
     // largura
@@ -262,6 +322,16 @@ function start(){
         document.getElementById("metros").innerText = t.falta + metros + " metros"
         document.getElementById("tempo").innerText = t.tempo + textoTempo
         document.getElementById("hora").innerText = t.acaba + fim.toLocaleTimeString()
+        if(telaAtual === "bobina"){
+            salvarBobinaAutomaticamente({
+                larguraCm: largura_cm,
+                espessuraMm: espSel,
+                velocidade: velSel,
+                metros,
+                tempoTexto,
+                fimHora: fim.toLocaleTimeString()
+            })
+        }
     }
 
     function calcAgropainel(){
@@ -283,9 +353,20 @@ function start(){
         document.getElementById("agroMetros").innerText = t.falta + metros + " metros"
         document.getElementById("agroTempo").innerText = t.tempo + textoTempo
         document.getElementById("agroHora").innerText = t.acaba + fim.toLocaleTimeString()
+        if(telaAtual === "agro"){
+            salvarAgropainelAutomaticamente({
+                larguraCm: largura_cm,
+                espessuraMm: espessura,
+                velocidade: agroVelSel,
+                metros,
+                tempoTexto,
+                fimHora: fim.toLocaleTimeString()
+            })
+        }
     }
 
     calc()
+    salvarUsuarioFirebase()
     mostrarEscolha()
 }
 })

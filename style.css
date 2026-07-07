@@ -354,6 +354,37 @@ button:hover {
     background: #2d3f5f;
 }
 
+#testarBancoBtn {
+    background: #006d5b;
+}
+
+.firebaseTesteMensagem {
+    display: none;
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.firebaseTesteMensagem.sucesso,
+.firebaseTesteMensagem.erro {
+    display: block;
+}
+
+.firebaseTesteMensagem.sucesso {
+    background: rgba(0, 255, 156, 0.12);
+    border: 1px solid rgba(0, 255, 156, 0.45);
+    color: #00ff9c;
+}
+
+.firebaseTesteMensagem.erro {
+    background: rgba(255, 107, 107, 0.12);
+    border: 1px solid rgba(255, 107, 107, 0.55);
+    color: #ff9b9b;
+    white-space: pre-wrap;
+}
+
 .historicoLista {
     display: grid;
     gap: 10px;
