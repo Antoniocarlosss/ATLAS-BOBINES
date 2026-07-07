@@ -1,8 +1,14 @@
-document.addEventListener("DOMContentLoaded", ()=>{
-    const lista = document.getElementById("historicoBobinaLista");
-    const status = document.getElementById("historicoBobinaStatus");
-    const chave = "atlas_historico_bobina";
+(function(){
+    const CHAVE_HISTORICO_BOBINA = "atlas_historico_bobina";
     let ultimaAssinatura = "";
+
+    function elementoLista(){
+        return document.getElementById("historicoBobinaLista");
+    }
+
+    function elementoStatus(){
+        return document.getElementById("historicoBobinaStatus");
+    }
 
     function htmlSeguro(valor){
         return String(valor ?? "").replace(/[&<>"']/g, (char)=>({
@@ -26,21 +32,45 @@ document.addEventListener("DOMContentLoaded", ()=>{
         return `${data.toLocaleDateString("pt-PT")} ${data.toLocaleTimeString("pt-PT", {hour:"2-digit", minute:"2-digit"})}`;
     }
 
-    function carregar(){
+    function assinatura(item){
+        return JSON.stringify({
+            usuario: item.usuario,
+            espessuraMm: Number(item.espessuraMm || 0),
+            velocidade: Number(item.velocidade || 0),
+            metros: Number(item.metros || 0)
+        });
+    }
+
+    function calculoValido(dados){
+        return Boolean(
+            dados &&
+            Number(dados.espessuraMm) > 0 &&
+            Number(dados.velocidade) > 0 &&
+            Number(dados.metros) > 0 &&
+            dados.tempoTexto &&
+            dados.fimHora
+        );
+    }
+
+    function carregarHistorico(){
         try{
-            return JSON.parse(localStorage.getItem(chave) || "[]");
+            const historico = JSON.parse(localStorage.getItem(CHAVE_HISTORICO_BOBINA) || "[]");
+            return Array.isArray(historico) ? historico : [];
         }catch(error){
+            console.error("Erro ao carregar Historico Bobina:", error);
             return [];
         }
     }
 
-    function gravar(itens){
-        localStorage.setItem(chave, JSON.stringify(itens.slice(0, 10)));
+    function gravarHistorico(itens){
+        localStorage.setItem(CHAVE_HISTORICO_BOBINA, JSON.stringify(itens.slice(0, 10)));
     }
 
-    function renderizar(){
-        const itens = carregar();
+    function renderizarHistorico(){
+        const lista = elementoLista();
+        if(!lista) return;
 
+        const itens = carregarHistorico();
         if(!itens.length){
             lista.innerHTML = "<p>Nenhuma bobina salva ainda.</p>";
             return;
@@ -57,55 +87,63 @@ document.addEventListener("DOMContentLoaded", ()=>{
         `).join("");
     }
 
-    function salvarLocal(dados){
-        if(!dados || !dados.espessuraMm || !dados.velocidade || !dados.metros) return;
+    async function salvarNoFirebase(dados, item){
+        if(!window.AtlasFirebase) return;
 
-        const item = {
-            usuario: dados.usuario || localStorage.getItem("nomeUsuario") || "Usuario",
-            criadoEmLocal: new Date().toISOString(),
-            espessuraMm: Number(dados.espessuraMm || 0),
-            velocidade: Number(dados.velocidade || 0),
-            metros: Number(dados.metros || 0)
-        };
-        const assinatura = JSON.stringify({
-            usuario: item.usuario,
-            espessuraMm: item.espessuraMm,
-            velocidade: item.velocidade,
-            metros: item.metros
-        });
-        const ultimo = carregar()[0];
-        const ultimaAssinaturaSalva = ultimo ? JSON.stringify({
-            usuario: ultimo.usuario,
-            espessuraMm: Number(ultimo.espessuraMm || 0),
-            velocidade: Number(ultimo.velocidade || 0),
-            metros: Number(ultimo.metros || 0)
-        }) : "";
-
-        if(assinatura === ultimaAssinatura || assinatura === ultimaAssinaturaSalva) return;
-        ultimaAssinatura = assinatura;
-
-        gravar([item, ...carregar()]);
-        renderizar();
-        if(status) status.innerText = "Salvo automaticamente";
-
-        if(window.AtlasFirebase){
-            window.AtlasFirebase.registrarHistoricoBobina("calculo automatico", {
+        try{
+            await window.AtlasFirebase.registrarHistoricoBobina("calculo automatico", {
                 ...dados,
                 usuario: item.usuario,
                 produtoBobina: "Bobina",
                 quantidade: item.metros,
                 observacao: "Salvo automaticamente na aba Bobina."
-            }).catch(()=>{});
+            });
+        }catch(error){
+            console.error("Erro ao salvar Historico Bobina no Firebase:", error);
+        }
+    }
+
+    function salvarHistorico(dados){
+        if(!calculoValido(dados)) return false;
+
+        const item = {
+            usuario: dados.usuario || localStorage.getItem("nomeUsuario") || "Usuario",
+            criadoEmLocal: new Date().toISOString(),
+            espessuraMm: Number(dados.espessuraMm),
+            velocidade: Number(dados.velocidade),
+            metros: Number(dados.metros)
+        };
+
+        const historicoAtual = carregarHistorico();
+        const assinaturaAtual = assinatura(item);
+        const assinaturaUltimoSalvo = historicoAtual[0] ? assinatura(historicoAtual[0]) : "";
+
+        if(assinaturaAtual === ultimaAssinatura || assinaturaAtual === assinaturaUltimoSalvo){
+            return false;
+        }
+
+        try{
+            gravarHistorico([item, ...historicoAtual]);
+            ultimaAssinatura = assinaturaAtual;
+            renderizarHistorico();
+            const status = elementoStatus();
+            if(status) status.innerText = "Salvo automaticamente";
+            salvarNoFirebase(dados, item);
+            return true;
+        }catch(error){
+            console.error("Erro ao salvar Historico Bobina:", error);
+            return false;
         }
     }
 
     window.AtlasHistoricoBobina = {
-        salvar: salvarLocal,
-        renderizar,
-        carregar
+        salvar: salvarHistorico,
+        salvarHistorico,
+        carregarHistorico,
+        renderizarHistorico,
+        chave: CHAVE_HISTORICO_BOBINA
     };
 
-    window.addEventListener("atlas:bobina-calculada", (event)=>salvarLocal(event.detail || {}));
-
-    renderizar();
-});
+    window.addEventListener("atlas:bobina-calculada", (event)=>salvarHistorico(event.detail || {}));
+    document.addEventListener("DOMContentLoaded", renderizarHistorico);
+})();
