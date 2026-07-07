@@ -164,6 +164,30 @@ window.ATLAS_FIREBASE_CONFIG = {
         return doc;
     }
 
+    async function excluirHistoricoBobina(id){
+        if(!firebaseApp.db){
+            throw new Error("Banco de dados nao configurado.");
+        }
+
+        if(!id){
+            throw new Error("Historico de bobina sem identificador.");
+        }
+
+        await firebaseApp.db.collection(COLECOES.historicoBobina).doc(id).delete();
+    }
+
+    async function excluirHistoricoAgropainel(id){
+        if(!firebaseApp.db){
+            throw new Error("Banco de dados nao configurado.");
+        }
+
+        if(!id){
+            throw new Error("Historico de agropainel sem identificador.");
+        }
+
+        await firebaseApp.db.collection(COLECOES.historicoAgropainel).doc(id).delete();
+    }
+
     async function salvarUsuario(dados){
         if(!firebaseApp.db) return null;
 
@@ -279,6 +303,8 @@ window.ATLAS_FIREBASE_CONFIG = {
         salvarCalculoAgropainel,
         registrarHistoricoBobina,
         registrarHistoricoAgropainel,
+        excluirHistoricoBobina,
+        excluirHistoricoAgropainel,
         observarHistoricos,
         observarHistoricoAgropainel
     };

@@ -549,6 +549,19 @@ button:hover {
     line-height: 1.25;
 }
 
+.apagarHistoricoBtn {
+    grid-column: 1 / -1;
+    margin: 6px 0 0;
+    padding: 7px 8px;
+    background: #5f2d2d;
+    color: #ffffff;
+    font-size: 13px;
+}
+
+.apagarHistoricoBtn:hover {
+    background: #8a3333;
+}
+
 #tempo,
 #agroTempo {
     font-size: 24px;
