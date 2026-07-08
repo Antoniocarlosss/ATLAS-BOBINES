@@ -5,9 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculadora de Bobina Atlas</title>
 <link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon.png">
+<link rel="manifest" href="manifest.json?v=20260708">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=20260708">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=20260708">
 <meta name="theme-color" content="#0077ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Atlas">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <!-- GOOGLE ANALYTICS -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-J6VCHDN4X2"></script>
@@ -25,7 +29,7 @@ gtag('config', 'G-J6VCHDN4X2');
 <div id="welcomeScreen" class="welcomeScreen">
     <div class="loginCard">
         <div class="loginBrand">
-            <img src="icon.png" alt="Atlas">
+            <img src="icon-192.png?v=20260708" alt="Atlas">
             <div>
                 <strong>Atlas Bobines</strong>
                 <span>Primeiro acesso</span>
@@ -179,6 +183,13 @@ gtag('config', 'G-J6VCHDN4X2');
 <script src="historicoBobina.js?v=20260707-2355"></script>
 <script src="historicoAgropainel.js?v=20260707-2355"></script>
 <script src="script.js?v=20260707-2355"></script>
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+        navigator.serviceWorker.register("sw.js?v=20260708").catch(function () {});
+    });
+}
+</script>
 </div>
 </body>
 </html>
