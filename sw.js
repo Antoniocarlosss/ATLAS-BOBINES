@@ -1,18 +1,27 @@
-const CACHE_NAME = "atlas-bobines-pwa-20260708";
+const CACHE_NAME = "atlas-bobines-pwa-20260708-2";
 const APP_SHELL = [
     "./",
     "./index.html",
-    "./manifest.json?v=20260708",
+    "./manifest.json?v=20260708-2",
     "./style.css",
     "./script.js?v=20260707-2355",
     "./firebase.js?v=20260707-2355",
     "./historicoBobina.js?v=20260707-2355",
     "./historicoAgropainel.js?v=20260707-2355",
-    "./icon.png?v=20260708",
-    "./icon-192.png?v=20260708",
-    "./icon-512.png?v=20260708",
-    "./apple-touch-icon.png?v=20260708",
-    "./favicon-32.png?v=20260708"
+    "./icon.png?v=20260708-2",
+    "./icon-72x72.png?v=20260708-2",
+    "./icon-96x96.png?v=20260708-2",
+    "./icon-128x128.png?v=20260708-2",
+    "./icon-144x144.png?v=20260708-2",
+    "./icon-152x152.png?v=20260708-2",
+    "./icon-180x180.png?v=20260708-2",
+    "./icon-192x192.png?v=20260708-2",
+    "./icon-384x384.png?v=20260708-2",
+    "./icon-512x512.png?v=20260708-2",
+    "./favicon-16x16.png?v=20260708-2",
+    "./favicon-32x32.png?v=20260708-2",
+    "./favicon.ico?v=20260708-2",
+    "./apple-touch-icon.png?v=20260708-2"
 ];
 
 self.addEventListener("install", (event) => {
@@ -27,7 +36,7 @@ self.addEventListener("activate", (event) => {
         caches.keys()
             .then((keys) => Promise.all(
                 keys
-                    .filter((key) => key !== CACHE_NAME)
+                    .filter((key) => key.startsWith("atlas-bobines-pwa-") && key !== CACHE_NAME)
                     .map((key) => caches.delete(key))
             ))
             .then(() => self.clients.claim())
@@ -38,14 +47,12 @@ self.addEventListener("fetch", (event) => {
     if (event.request.method !== "GET") return;
 
     event.respondWith(
-        caches.match(event.request).then((cached) => {
-            if (cached) return cached;
-
-            return fetch(event.request).then((response) => {
+        fetch(event.request)
+            .then((response) => {
                 const copy = response.clone();
                 caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
                 return response;
-            });
-        })
+            })
+            .catch(() => caches.match(event.request))
     );
 });
