@@ -1,8 +1,8 @@
 {
   "name": "ATLAS-BOBINES",
   "short_name": "ATLAS-BOBINES",
-  "id": "./",
-  "start_url": "./index.html",
+  "id": "./index.html",
+  "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
