@@ -1,8 +1,8 @@
-const CACHE_NAME = "atlas-bobines-pwa-20260708-3";
+const CACHE_NAME = "atlas-bobines-pwa-20260711";
 const APP_SHELL = [
     "./",
     "./index.html",
-    "./manifest.json?v=20260708-3",
+    "./manifest.json",
     "./style.css",
     "./script.js?v=20260707-2355",
     "./firebase.js?v=20260707-2355",
