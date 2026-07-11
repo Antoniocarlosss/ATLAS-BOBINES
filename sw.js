@@ -1,4 +1,4 @@
-const CACHE_NAME = "atlas-bobines-pwa-20260711-2";
+const CACHE_NAME = "atlas-bobines-pwa-20260711-3";
 const APP_SHELL = [
     "./",
     "./index.html",
@@ -16,8 +16,10 @@ const APP_SHELL = [
     "./icon-152x152.png",
     "./icon-180x180.png",
     "./icon-192x192.png",
+    "./icon-maskable-192x192.png",
     "./icon-384x384.png",
     "./icon-512x512.png",
+    "./icon-maskable-512x512.png",
     "./favicon-16x16.png",
     "./favicon-32x32.png",
     "./favicon.ico",
