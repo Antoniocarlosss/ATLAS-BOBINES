@@ -1,29 +1,29 @@
-const CACHE_NAME = "atlas-bobines-pwa-20260711-3";
+const CACHE_NAME = "atlas-bobines-pwa-20260711-4";
 const APP_SHELL = [
     "./",
     "./index.html",
-    "./manifest.json",
+    "./manifest.json?v=20260711-4",
     "./style.css",
-    "./script.js?v=20260707-2355",
+    "./script.js?v=20260711-4",
     "./firebase.js?v=20260707-2355",
     "./historicoBobina.js?v=20260707-2355",
     "./historicoAgropainel.js?v=20260707-2355",
-    "./icon.png",
-    "./icon-72x72.png",
-    "./icon-96x96.png",
-    "./icon-128x128.png",
-    "./icon-144x144.png",
-    "./icon-152x152.png",
-    "./icon-180x180.png",
-    "./icon-192x192.png",
-    "./icon-maskable-192x192.png",
-    "./icon-384x384.png",
-    "./icon-512x512.png",
-    "./icon-maskable-512x512.png",
-    "./favicon-16x16.png",
-    "./favicon-32x32.png",
-    "./favicon.ico",
-    "./apple-touch-icon.png"
+    "./icon.png?v=20260711-4",
+    "./icon-72x72.png?v=20260711-4",
+    "./icon-96x96.png?v=20260711-4",
+    "./icon-128x128.png?v=20260711-4",
+    "./icon-144x144.png?v=20260711-4",
+    "./icon-152x152.png?v=20260711-4",
+    "./icon-180x180.png?v=20260711-4",
+    "./icon-192x192.png?v=20260711-4",
+    "./icon-maskable-192x192.png?v=20260711-4",
+    "./icon-384x384.png?v=20260711-4",
+    "./icon-512x512.png?v=20260711-4",
+    "./icon-maskable-512x512.png?v=20260711-4",
+    "./favicon-16x16.png?v=20260711-4",
+    "./favicon-32x32.png?v=20260711-4",
+    "./favicon.ico?v=20260711-4",
+    "./apple-touch-icon.png?v=20260711-4"
 ];
 
 self.addEventListener("install", (event) => {
