@@ -238,6 +238,20 @@
     font-weight: bold;
 }
 
+.installAppBtn {
+    display: none;
+    margin: 12px auto 18px;
+    padding: 13px;
+    max-width: 420px;
+    background: #00a86b;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.installAppBtn:hover {
+    background: #00c47e;
+}
+
 h2 {
     text-align: center;
     color: #00e0ff;

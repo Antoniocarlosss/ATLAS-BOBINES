@@ -7,6 +7,8 @@ const idiomaSelect = document.getElementById("idiomaSelect")
 const entrar = document.getElementById("entrarBtn")
 const resetBtn = document.getElementById("resetUser")
 const nomeErro = document.getElementById("nomeErro")
+const installAppBtn = document.getElementById("installAppBtn")
+const installAppBtnWelcome = document.getElementById("installAppBtnWelcome")
 const calculatorChoice = document.getElementById("calculatorChoice")
 const bobinaCalculator = document.getElementById("bobinaCalculator")
 const agropainelCalculator = document.getElementById("agropainelCalculator")
@@ -19,6 +21,57 @@ const labelIdiomaAtual = document.getElementById("labelIdiomaAtual")
 
 let nome = localStorage.getItem("nomeUsuario")
 let idioma = localStorage.getItem("idiomaUsuario") || "pt"
+let installPromptEvent = null
+
+function mostrarBotoesInstalar(mostrar){
+    ;[installAppBtn, installAppBtnWelcome].forEach((botao)=>{
+        if(botao) botao.style.display = mostrar ? "block" : "none"
+    })
+}
+
+function dispositivoIos(){
+    return /iphone|ipad|ipod/i.test(navigator.userAgent)
+}
+
+async function baixarApp(){
+    if(window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone){
+        alert("O app ja esta instalado neste dispositivo.")
+        mostrarBotoesInstalar(false)
+        return
+    }
+
+    if(installPromptEvent){
+        installPromptEvent.prompt()
+        const escolha = await installPromptEvent.userChoice
+        if(escolha.outcome === "accepted"){
+            installPromptEvent = null
+            mostrarBotoesInstalar(false)
+        }
+        return
+    }
+
+    if(dispositivoIos()){
+        alert("No iPhone, toque em Compartilhar e depois em Adicionar a Tela de Inicio.")
+        return
+    }
+
+    alert("Se o botao de instalar nao abrir, toque no menu do navegador e escolha Instalar app ou Adicionar a tela inicial.")
+}
+
+window.addEventListener("beforeinstallprompt", (event)=>{
+    event.preventDefault()
+    installPromptEvent = event
+    mostrarBotoesInstalar(true)
+})
+
+window.addEventListener("appinstalled", ()=>{
+    installPromptEvent = null
+    mostrarBotoesInstalar(false)
+})
+
+if(installAppBtn) installAppBtn.onclick = baixarApp
+if(installAppBtnWelcome) installAppBtnWelcome.onclick = baixarApp
+if(dispositivoIos() && !(window.navigator.standalone)) mostrarBotoesInstalar(true)
 
 async function salvarUsuarioFirebase(){
     if(!window.AtlasFirebase || !nome) return
