@@ -21,12 +21,22 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    linear-gradient(180deg, rgba(9, 11, 15, 0.18) 0%, rgba(9, 11, 15, 0.58) 210px, rgba(9, 11, 15, 0.94) 390px),
+    linear-gradient(180deg, rgba(9, 11, 15, 0.2) 0%, rgba(9, 11, 15, 0.76) 260px, rgba(9, 11, 15, 0.96) 460px),
     radial-gradient(circle at top left, rgba(227, 38, 47, 0.18), transparent 34rem),
-    url("background-atlas.png") center 26px / min(92vw, 680px) auto no-repeat fixed,
     linear-gradient(180deg, #0d1016 0%, var(--bg) 62%);
   color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: url("background-atlas.png") center 45% / min(92vw, 650px) auto no-repeat;
+  opacity: 0.18;
+  filter: contrast(1.25) saturate(1.15);
 }
 
 button,
@@ -41,9 +51,11 @@ button {
 }
 
 .appShell {
+  position: relative;
+  z-index: 1;
   width: min(100%, 560px);
   margin: 0 auto;
-  padding: max(190px, env(safe-area-inset-top)) 14px 28px;
+  padding: max(132px, env(safe-area-inset-top)) 14px 28px;
 }
 
 .topBar {
@@ -404,12 +416,14 @@ select:focus {
 }
 
 @media (max-width: 390px) {
-  body {
-    background-size: auto, auto, 90vw auto, auto;
+  body::before {
+    background-size: 92vw auto;
+    background-position: center 48%;
+    opacity: 0.17;
   }
 
   .appShell {
-    padding-top: 168px;
+    padding-top: 116px;
   }
 
   .topBar {
