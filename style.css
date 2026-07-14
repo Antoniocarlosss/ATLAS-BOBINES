@@ -366,6 +366,11 @@ select:focus {
   width: 100%;
 }
 
+.saveButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .historyPanel {
   margin-top: 14px;
   padding: 14px;

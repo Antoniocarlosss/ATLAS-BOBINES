@@ -60,8 +60,8 @@ const state = {
   firebaseReady: false,
   sharedHistory: null,
   temperature: "--°C",
-  bobina: { largura: 10, espessura: 0.32, velocidade: 10 },
-  agropainel: { largura: 15, espessura: 0.6, velocidade: 10 },
+  bobina: { largura: null, espessura: null, velocidade: null },
+  agropainel: { largura: null, espessura: 0.6, velocidade: null },
   installPrompt: null
 };
 
@@ -98,6 +98,8 @@ function finishHour(totalMinutes) {
 }
 
 function calculate({ largura, espessura, velocidade }, interno) {
+  if (!largura || !espessura || !velocidade) return null;
+
   const larguraMm = Number(largura) * 10;
   const metros = Math.round(((larguraMm / Number(espessura)) * 3.14 * (interno + larguraMm)) / 1000);
   const minutos = Math.max(1, Math.round(metros / Number(velocidade)));
@@ -105,10 +107,11 @@ function calculate({ largura, espessura, velocidade }, interno) {
 }
 
 function fillSelect(select, values, selected) {
-  select.innerHTML = values.map((value) => {
+  const options = values.map((value) => {
     const optionSelected = Number(value) === Number(selected) ? " selected" : "";
     return `<option value="${value}"${optionSelected}>${formatWidth(value)}</option>`;
   }).join("");
+  select.innerHTML = `<option value="">Selecione</option>${options}`;
 }
 
 function renderOptions(container, values, selected, unit, onSelect) {
@@ -191,9 +194,10 @@ function updateBobina() {
   });
 
   const result = calculate(state.bobina, 500);
-  $("#bobinaMetros").textContent = `${formatNumber(result.metros)} m`;
-  $("#bobinaTempo").textContent = result.tempo;
-  $("#bobinaHora").textContent = result.hora;
+  $("#saveBobina").disabled = !result;
+  $("#bobinaMetros").textContent = result ? `${formatNumber(result.metros)} m` : "--";
+  $("#bobinaTempo").textContent = result ? result.tempo : "--";
+  $("#bobinaHora").textContent = result ? result.hora : "--";
 }
 
 function updateAgropainel() {
@@ -204,9 +208,10 @@ function updateAgropainel() {
   });
 
   const result = calculate(state.agropainel, 200);
-  $("#agroMetros").textContent = `${formatNumber(result.metros)} m`;
-  $("#agroTempo").textContent = result.tempo;
-  $("#agroHora").textContent = result.hora;
+  $("#saveAgro").disabled = !result;
+  $("#agroMetros").textContent = result ? `${formatNumber(result.metros)} m` : "--";
+  $("#agroTempo").textContent = result ? result.tempo : "--";
+  $("#agroHora").textContent = result ? result.hora : "--";
 }
 
 function getHistory() {
@@ -374,6 +379,11 @@ function saveCurrent(type) {
   const isBobina = type === "Bobina";
   const values = isBobina ? state.bobina : state.agropainel;
   const result = calculate(values, isBobina ? 500 : 200);
+  if (!result) {
+    alert("Selecione largura, espessura e velocidade antes de salvar.");
+    return;
+  }
+
   const item = {
     calculadora: type,
     tipo: isBobina ? `${t("bobina")} ${formatNumber(values.espessura, 2)} mm` : `${t("agropainel")} 0.60 mm`,
@@ -492,12 +502,12 @@ function bindEvents() {
   });
 
   $("#bobinaLargura").addEventListener("change", (event) => {
-    state.bobina.largura = Number(event.target.value);
+    state.bobina.largura = event.target.value ? Number(event.target.value) : null;
     updateBobina();
   });
 
   $("#agroLargura").addEventListener("change", (event) => {
-    state.agropainel.largura = Number(event.target.value);
+    state.agropainel.largura = event.target.value ? Number(event.target.value) : null;
     updateAgropainel();
   });
 
