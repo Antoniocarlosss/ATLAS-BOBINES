@@ -1,4 +1,4 @@
-const CACHE_NAME = "atlas-bobines-clean-v3";
+const CACHE_NAME = "atlas-bobines-clean-v5";
 const APP_FILES = [
   "./",
   "./index.html",
