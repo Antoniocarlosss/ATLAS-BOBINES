@@ -21,9 +21,9 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    linear-gradient(180deg, rgba(9, 11, 15, 0.48), rgba(9, 11, 15, 0.92)),
+    linear-gradient(180deg, rgba(9, 11, 15, 0.18) 0%, rgba(9, 11, 15, 0.58) 210px, rgba(9, 11, 15, 0.94) 390px),
     radial-gradient(circle at top left, rgba(227, 38, 47, 0.18), transparent 34rem),
-    url("background-atlas.png") center 28px / min(88vw, 520px) auto no-repeat fixed,
+    url("background-atlas.png") center 26px / min(92vw, 680px) auto no-repeat fixed,
     linear-gradient(180deg, #0d1016 0%, var(--bg) 62%);
   color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
@@ -43,7 +43,7 @@ button {
 .appShell {
   width: min(100%, 560px);
   margin: 0 auto;
-  padding: max(132px, env(safe-area-inset-top)) 14px 28px;
+  padding: max(190px, env(safe-area-inset-top)) 14px 28px;
 }
 
 .topBar {
@@ -409,7 +409,7 @@ select:focus {
   }
 
   .appShell {
-    padding-top: 116px;
+    padding-top: 168px;
   }
 
   .topBar {
