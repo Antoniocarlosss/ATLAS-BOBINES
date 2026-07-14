@@ -1,0 +1,38 @@
+{
+  "name": "ATLAS BOBINES",
+  "short_name": "ATLAS",
+  "description": "Calculadora ATLAS para bobinas e agropainel.",
+  "id": "/ATLAS-BOBINES/",
+  "start_url": "/ATLAS-BOBINES/",
+  "scope": "/ATLAS-BOBINES/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#090b0f",
+  "theme_color": "#090b0f",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

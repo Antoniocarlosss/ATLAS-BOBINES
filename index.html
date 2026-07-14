@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ATLAS BOBINES</title>
+  <meta name="description" content="Calculadora ATLAS para bobinas e agropainel.">
+  <meta name="theme-color" content="#090b0f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ATLAS BOBINES">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="appShell">
+    <header class="topBar">
+      <img class="appIcon" src="icon-192x192.png" alt="ATLAS">
+      <div>
+        <p class="eyebrow" data-i18n="brand">Sistema ATLAS</p>
+        <h1 data-i18n="title">Calculadora de Bobines</h1>
+      </div>
+      <button class="installButton" id="installButton" type="button" data-i18n="install">Instalar</button>
+    </header>
+
+    <section class="statusGrid" aria-label="Status">
+      <div class="statusItem">
+        <span id="dayIcon">☀</span>
+        <strong id="currentTime">--:--:--</strong>
+        <small data-i18n="currentTime">Hora atual</small>
+      </div>
+      <div class="statusItem">
+        <span>°C</span>
+        <strong id="temperature">--°C</strong>
+        <small data-i18n="temperature">Temperatura</small>
+      </div>
+    </section>
+
+    <section class="panel languagePanel">
+      <label for="languageSelect" data-i18n="language">Idioma</label>
+      <select id="languageSelect">
+        <option value="pt">Português</option>
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="bn">বাংলা</option>
+        <option value="te">తెలుగు</option>
+        <option value="mr">मराठी</option>
+        <option value="ta">தமிழ்</option>
+        <option value="ur">اردو</option>
+        <option value="gu">ગુજરાતી</option>
+        <option value="kn">ಕನ್ನಡ</option>
+        <option value="ml">മലയാളം</option>
+        <option value="pa">ਪੰਜਾਬੀ</option>
+      </select>
+    </section>
+
+    <section class="panel operatorPanel" id="operatorPanel">
+      <label for="operatorName" data-i18n="operatorName">Nome do operador</label>
+      <div class="inlineForm">
+        <input id="operatorName" type="text" maxlength="32" autocomplete="name" data-i18n-placeholder="namePlaceholder" placeholder="Digite seu nome">
+        <button id="saveOperator" type="button" data-i18n="enter">Entrar</button>
+      </div>
+      <p class="helperText" data-i18n="nameHelp">O nome fica salvo apenas neste celular.</p>
+    </section>
+
+    <section class="panel summaryPanel" id="summaryPanel" hidden>
+      <div>
+        <span id="greeting">Bem-vindo</span>
+        <strong id="operatorLabel"></strong>
+      </div>
+      <button class="ghostButton" id="changeOperator" type="button" data-i18n="change">Trocar</button>
+    </section>
+
+    <nav class="tabs" aria-label="Calculadoras">
+      <button class="tab active" type="button" data-mode="bobina" data-i18n="bobina">Bobina</button>
+      <button class="tab" type="button" data-mode="agropainel" data-i18n="agropainel">Agropainel</button>
+    </nav>
+
+    <section class="calculator active" id="bobinaCalculator">
+      <div class="field">
+        <label for="bobinaLargura" data-i18n="outerWidth">Largura externa</label>
+        <select id="bobinaLargura"></select>
+      </div>
+
+      <div class="field">
+        <span class="labelText" data-i18n="thickness">Espessura da chapa</span>
+        <div class="optionGrid" id="bobinaEspessuras"></div>
+      </div>
+
+      <div class="field">
+        <span class="labelText" data-i18n="speed">Velocidade da maquina</span>
+        <div class="optionGrid" id="bobinaVelocidades"></div>
+      </div>
+
+      <div class="resultBox">
+        <div>
+          <span data-i18n="remaining">Falta para acabar</span>
+          <strong id="bobinaMetros">0 m</strong>
+        </div>
+        <div>
+          <span data-i18n="timeLeft">Tempo restante</span>
+          <strong id="bobinaTempo">0 min</strong>
+        </div>
+        <div>
+          <span data-i18n="endsAt">Acaba as</span>
+          <strong id="bobinaHora">--:-- hrs</strong>
+        </div>
+      </div>
+
+      <button class="saveButton" id="saveBobina" type="button" data-i18n="saveHistory">Salvar no historico</button>
+    </section>
+
+    <section class="calculator" id="agropainelCalculator">
+      <div class="fixedInfo">
+        <strong data-i18n="agropainel">Agropainel</strong>
+        <span data-i18n="agroFixed">Espessura fixa 0.60 mm | Interno 200</span>
+      </div>
+
+      <div class="field">
+        <label for="agroLargura" data-i18n="flapWidth">Largura da aba</label>
+        <select id="agroLargura"></select>
+      </div>
+
+      <div class="field">
+        <span class="labelText" data-i18n="speed">Velocidade da maquina</span>
+        <div class="optionGrid" id="agroVelocidades"></div>
+      </div>
+
+      <div class="resultBox">
+        <div>
+          <span data-i18n="remaining">Falta para acabar</span>
+          <strong id="agroMetros">0 m</strong>
+        </div>
+        <div>
+          <span data-i18n="timeLeft">Tempo restante</span>
+          <strong id="agroTempo">0 min</strong>
+        </div>
+        <div>
+          <span data-i18n="endsAt">Acaba as</span>
+          <strong id="agroHora">--:-- hrs</strong>
+        </div>
+      </div>
+
+      <button class="saveButton" id="saveAgro" type="button" data-i18n="saveHistory">Salvar no historico</button>
+    </section>
+
+    <section class="historyPanel">
+      <div class="historyHeader">
+        <div>
+          <p class="eyebrow" data-i18n="localHistory">Historico local</p>
+          <h2 data-i18n="lastCalculations">Ultimos calculos</h2>
+        </div>
+        <button class="ghostButton danger" id="clearHistory" type="button" data-i18n="clear">Limpar</button>
+      </div>
+      <div class="historyList" id="historyList"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("sw.js");
+      });
+    }
+  </script>
+</body>
+</html>
