@@ -176,6 +176,7 @@ function updateTabs() {
   $$(".tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.mode === state.mode));
   $("#bobinaCalculator").classList.toggle("active", state.mode === "bobina");
   $("#agropainelCalculator").classList.toggle("active", state.mode === "agropainel");
+  renderHistory();
 }
 
 function updateBobina() {
@@ -220,24 +221,44 @@ function getHistory() {
 }
 
 function setHistory(items) {
-  localStorage.setItem(STORAGE.history, JSON.stringify(items.slice(0, 10)));
+  localStorage.setItem(STORAGE.history, JSON.stringify(items.slice(0, 30)));
+}
+
+function currentCalculatorName() {
+  return state.mode === "agropainel" ? "Agropainel" : "Bobina";
+}
+
+function itemCalculator(item) {
+  if (item.calculadora === "Bobina" || item.calculadora === "Agropainel") return item.calculadora;
+  return String(item.tipo || "").toLowerCase().includes("agro") ? "Agropainel" : "Bobina";
+}
+
+function getVisibleHistoryEntries() {
+  const currentCalculator = currentCalculatorName();
+  return getHistory()
+    .map((item, sourceIndex) => ({ item, sourceIndex }))
+    .filter((entry) => itemCalculator(entry.item) === currentCalculator)
+    .slice(0, 10);
 }
 
 function renderHistory() {
-  const items = getHistory();
+  const entries = getVisibleHistoryEntries();
   const list = $("#historyList");
-  if (!items.length) {
+  const title = document.querySelector(".historyHeader h2");
+  if (title) title.textContent = `${t("localHistory")} ${currentCalculatorName()}`;
+
+  if (!entries.length) {
     list.innerHTML = `<p class="emptyHistory">${t("emptyHistory")}</p>`;
     return;
   }
 
-  list.innerHTML = items.map((item, index) => `
+  list.innerHTML = entries.map(({ item, sourceIndex }) => `
     <article class="historyItem">
       <strong>${item.tipo}</strong>
       <small>${item.data}</small>
       <span>${item.metros} m | ${item.tempo} | ${item.hora}</span>
       <small>${item.operador}</small>
-      <button class="deleteHistoryButton" type="button" data-history-index="${index}">Apagar</button>
+      <button class="deleteHistoryButton" type="button" data-history-index="${sourceIndex}">Apagar</button>
     </article>
   `).join("");
 }
@@ -314,7 +335,7 @@ function setupFirebaseHistory() {
     const historyQuery = query(
       collection(firestoreDb, "historico_calculos"),
       orderBy("criadoEm", "desc"),
-      limit(10)
+      limit(30)
     );
 
     onSnapshot(historyQuery, (snapshot) => {
@@ -322,6 +343,7 @@ function setupFirebaseHistory() {
         const item = historyDoc.data();
         return {
           firebaseId: historyDoc.id,
+          calculadora: item.calculadora || itemCalculator(item),
           tipo: item.tipo || item.calculadora || "Calculo",
           operador: item.operador || t("operator"),
           metros: item.metros || String(item.metrosNumero || 0),
@@ -353,6 +375,7 @@ function saveCurrent(type) {
   const values = isBobina ? state.bobina : state.agropainel;
   const result = calculate(values, isBobina ? 500 : 200);
   const item = {
+    calculadora: type,
     tipo: isBobina ? `${t("bobina")} ${formatNumber(values.espessura, 2)} mm` : `${t("agropainel")} 0.60 mm`,
     operador: state.operator || t("operator"),
     metros: formatNumber(result.metros),
@@ -360,7 +383,7 @@ function saveCurrent(type) {
     hora: result.hora,
     data: new Date().toLocaleString(t("lang"), { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
   };
-  const nextHistory = [item, ...getHistory()].slice(0, 10);
+  const nextHistory = [item, ...getHistory()].slice(0, 30);
   if (Array.isArray(state.sharedHistory)) state.sharedHistory = nextHistory;
   setHistory(nextHistory);
   renderHistory();
@@ -483,9 +506,19 @@ function bindEvents() {
   $("#clearHistory").addEventListener("click", () => {
     const code = prompt("Digite o codigo para limpar:");
     if (code === DELETE_CODE && confirm(t("clearQuestion"))) {
-      state.sharedHistory = Array.isArray(state.sharedHistory) ? [] : null;
-      setHistory([]);
+      const currentCalculator = currentCalculatorName();
+      const removedItems = getHistory().filter((item) => itemCalculator(item) === currentCalculator);
+      const nextHistory = getHistory().filter((item) => itemCalculator(item) !== currentCalculator);
+      if (Array.isArray(state.sharedHistory)) state.sharedHistory = nextHistory;
+      setHistory(nextHistory);
       renderHistory();
+      removedItems.forEach((item) => {
+        if (item.firebaseId) {
+          deleteDoc(doc(firestoreDb, "historico_calculos", item.firebaseId)).catch((error) => {
+            console.warn("Firebase apagar indisponivel:", error);
+          });
+        }
+      });
     } else if (code !== null && code !== DELETE_CODE) {
       alert("Codigo incorreto.");
     }
