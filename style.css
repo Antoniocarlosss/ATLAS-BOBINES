@@ -408,6 +408,16 @@ select:focus {
   text-align: right;
 }
 
+.deleteHistoryButton {
+  grid-column: 1 / -1;
+  min-height: 36px;
+  border-radius: 8px;
+  background: rgba(227, 38, 47, 0.14);
+  border: 1px solid rgba(227, 38, 47, 0.42);
+  color: #ffb2b7;
+  font-weight: 700;
+}
+
 .emptyHistory {
   margin: 0;
   color: var(--muted);

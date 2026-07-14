@@ -3,6 +3,7 @@ import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.g
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getFirestore,
   limit,
@@ -34,6 +35,8 @@ const STORAGE = {
   history: "atlas_calc_history",
   language: "atlas_language"
 };
+
+const DELETE_CODE = "1234";
 
 const translations = {
   pt: { lang: "pt-BR", brand: "Sistema ATLAS", title: "Calculadora de Bobines", install: "Instalar", currentTime: "Hora atual", temperature: "Temperatura", language: "Idioma", operatorName: "Nome do operador", namePlaceholder: "Digite seu nome", enter: "Entrar", nameHelp: "O nome fica salvo apenas neste celular.", change: "Trocar", bobina: "Bobina", agropainel: "Agropainel", outerWidth: "Largura externa", flapWidth: "Largura da aba", thickness: "Espessura da chapa", speed: "Velocidade da maquina", remaining: "Falta para acabar", timeLeft: "Tempo restante", endsAt: "Acaba as", saveHistory: "Salvar no historico", agroFixed: "Espessura fixa 0.60 mm | Interno 200", localHistory: "Historico local", lastCalculations: "Ultimos calculos", clear: "Limpar", emptyHistory: "Nenhum calculo salvo ainda.", goodMorning: "Bom dia", goodAfternoon: "Boa tarde", goodNight: "Boa noite", operator: "Operador", clearQuestion: "Limpar historico deste celular?", installIos: "No iPhone, toque em Compartilhar e depois em Adicionar a Tela de Inicio.", installHelp: "Abra o menu do navegador e toque em Instalar app ou Adicionar a tela inicial.", tempUnavailable: "Sem temp." },
@@ -228,14 +231,41 @@ function renderHistory() {
     return;
   }
 
-  list.innerHTML = items.map((item) => `
+  list.innerHTML = items.map((item, index) => `
     <article class="historyItem">
       <strong>${item.tipo}</strong>
       <small>${item.data}</small>
       <span>${item.metros} m | ${item.tempo} | ${item.hora}</span>
       <small>${item.operador}</small>
+      <button class="deleteHistoryButton" type="button" data-history-index="${index}">Apagar</button>
     </article>
   `).join("");
+}
+
+async function deleteHistoryItem(index) {
+  const items = getHistory();
+  const item = items[Number(index)];
+  if (!item) return;
+
+  const code = prompt("Digite o codigo para apagar:");
+  if (code === null) return;
+  if (code !== DELETE_CODE) {
+    alert("Codigo incorreto.");
+    return;
+  }
+
+  const nextHistory = items.filter((_, itemIndex) => itemIndex !== Number(index));
+  if (Array.isArray(state.sharedHistory)) state.sharedHistory = nextHistory;
+  setHistory(nextHistory);
+  renderHistory();
+
+  if (item.firebaseId) {
+    try {
+      await deleteDoc(doc(firestoreDb, "historico_calculos", item.firebaseId));
+    } catch (error) {
+      console.warn("Firebase apagar indisponivel:", error);
+    }
+  }
 }
 
 function userDocId(name) {
@@ -291,6 +321,7 @@ function setupFirebaseHistory() {
       state.sharedHistory = snapshot.docs.map((historyDoc) => {
         const item = historyDoc.data();
         return {
+          firebaseId: historyDoc.id,
           tipo: item.tipo || item.calculadora || "Calculo",
           operador: item.operador || t("operator"),
           metros: item.metros || String(item.metrosNumero || 0),
@@ -450,10 +481,20 @@ function bindEvents() {
   $("#saveBobina").addEventListener("click", () => saveCurrent("Bobina"));
   $("#saveAgro").addEventListener("click", () => saveCurrent("Agropainel"));
   $("#clearHistory").addEventListener("click", () => {
-    if (confirm(t("clearQuestion"))) {
+    const code = prompt("Digite o codigo para limpar:");
+    if (code === DELETE_CODE && confirm(t("clearQuestion"))) {
+      state.sharedHistory = Array.isArray(state.sharedHistory) ? [] : null;
       setHistory([]);
       renderHistory();
+    } else if (code !== null && code !== DELETE_CODE) {
+      alert("Codigo incorreto.");
     }
+  });
+
+  $("#historyList").addEventListener("click", (event) => {
+    const button = event.target.closest(".deleteHistoryButton");
+    if (!button) return;
+    deleteHistoryItem(button.dataset.historyIndex);
   });
 }
 
