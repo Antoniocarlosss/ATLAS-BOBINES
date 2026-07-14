@@ -53,6 +53,10 @@ const translations = {
   pa: { lang: "pa", brand: "ATLAS ਸਿਸਟਮ", title: "ਕੋਇਲ ਕੈਲਕੂਲੇਟਰ", install: "ਇੰਸਟਾਲ", currentTime: "ਮੌਜੂਦਾ ਸਮਾਂ", temperature: "ਤਾਪਮਾਨ", language: "ਭਾਸ਼ਾ", operatorName: "ਆਪਰੇਟਰ ਨਾਮ", namePlaceholder: "ਆਪਣਾ ਨਾਮ ਲਿਖੋ", enter: "ਦਾਖਲ", nameHelp: "ਨਾਮ ਸਿਰਫ ਇਸ ਮੋਬਾਈਲ ਵਿੱਚ ਸੇਵ ਹੋਵੇਗਾ.", change: "ਬਦਲੋ", bobina: "ਕੋਇਲ", agropainel: "ਐਗਰੋਪੈਨਲ", outerWidth: "ਬਾਹਰੀ ਚੌੜਾਈ", flapWidth: "ਫਲੈਪ ਚੌੜਾਈ", thickness: "ਸ਼ੀਟ ਮੋਟਾਈ", speed: "ਮਸ਼ੀਨ ਗਤੀ", remaining: "ਬਾਕੀ", timeLeft: "ਬਾਕੀ ਸਮਾਂ", endsAt: "ਖਤਮ ਹੋਵੇਗਾ", saveHistory: "ਇਤਿਹਾਸ ਵਿੱਚ ਸੇਵ", agroFixed: "ਫਿਕਸ ਮੋਟਾਈ 0.60 mm | ਅੰਦਰ 200", localHistory: "ਲੋਕਲ ਇਤਿਹਾਸ", lastCalculations: "ਆਖਰੀ ਹਿਸਾਬ", clear: "ਸਾਫ਼", emptyHistory: "ਹਾਲੇ ਕੋਈ ਹਿਸਾਬ ਸੇਵ ਨਹੀਂ.", goodMorning: "ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ", goodAfternoon: "ਸ਼ੁਭ ਦੁਪਹਿਰ", goodNight: "ਸ਼ੁਭ ਰਾਤ", operator: "ਆਪਰੇਟਰ", clearQuestion: "ਇਸ ਮੋਬਾਈਲ ਦਾ ਇਤਿਹਾਸ ਸਾਫ਼ ਕਰਨਾ?", installIos: "iPhone ਤੇ Share ਦਬਾਓ ਅਤੇ Add to Home Screen ਚੁਣੋ.", installHelp: "ਬਰਾਊਜ਼ਰ ਮੀਨੂ ਖੋਲ੍ਹੋ ਅਤੇ Install app ਜਾਂ Add to home screen ਚੁਣੋ.", tempUnavailable: "ਤਾਪ ਨਹੀਂ" }
 };
 
+Object.keys(translations).forEach((languageKey) => {
+  translations[languageKey].dateLabel = languageKey === "en" ? "Date" : "Data";
+});
+
 const state = {
   mode: "bobina",
   language: localStorage.getItem(STORAGE.language) || "pt",
@@ -141,6 +145,12 @@ function updateClock() {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit"
+  });
+  $("#currentDate").textContent = now.toLocaleDateString(t("lang"), {
+    weekday: "long",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
   });
   $("#temperature").textContent = state.temperature;
   $("#greeting").textContent = getGreeting();
