@@ -1,3 +1,34 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
+import {
+  addDoc,
+  collection,
+  doc,
+  getFirestore,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC0SrD268LbO-7cmNCwYf72AXOSFVL0TqQ",
+  authDomain: "atlas-bobina.firebaseapp.com",
+  projectId: "atlas-bobina",
+  storageBucket: "atlas-bobina.firebasestorage.app",
+  messagingSenderId: "352865662588",
+  appId: "1:352865662588:web:462be42c61c2665ceb7bf9",
+  measurementId: "G-5JG3M88ZLN"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const firestoreDb = getFirestore(firebaseApp);
+analyticsIsSupported().then((supported) => {
+  if (supported) getAnalytics(firebaseApp);
+}).catch(() => {});
+
 const STORAGE = {
   operator: "atlas_operator_name",
   history: "atlas_calc_history",
@@ -23,6 +54,8 @@ const state = {
   mode: "bobina",
   language: localStorage.getItem(STORAGE.language) || "pt",
   operator: localStorage.getItem(STORAGE.operator) || "",
+  firebaseReady: false,
+  sharedHistory: null,
   temperature: "--°C",
   bobina: { largura: 10, espessura: 0.32, velocidade: 10 },
   agropainel: { largura: 15, espessura: 0.6, velocidade: 10 },
@@ -173,6 +206,8 @@ function updateAgropainel() {
 }
 
 function getHistory() {
+  if (Array.isArray(state.sharedHistory)) return state.sharedHistory;
+
   try {
     const value = JSON.parse(localStorage.getItem(STORAGE.history) || "[]");
     return Array.isArray(value) ? value : [];
@@ -203,6 +238,85 @@ function renderHistory() {
   `).join("");
 }
 
+function userDocId(name) {
+  return String(name || "operador").trim().toLowerCase().replace(/[^a-z0-9_-]+/gi, "_").slice(0, 80) || "operador";
+}
+
+async function saveOperatorToFirebase() {
+  if (!state.operator) return;
+
+  try {
+    await setDoc(doc(firestoreDb, "usuarios", userDocId(state.operator)), {
+      nome: state.operator,
+      idioma: state.language,
+      ultimoAcessoLocal: new Date().toISOString(),
+      atualizadoEm: serverTimestamp()
+    }, { merge: true });
+    state.firebaseReady = true;
+  } catch (error) {
+    console.warn("Firebase usuarios indisponivel:", error);
+  }
+}
+
+async function saveHistoryToFirebase(item, type, values, result) {
+  try {
+    await addDoc(collection(firestoreDb, "historico_calculos"), {
+      ...item,
+      calculadora: type,
+      operador: state.operator || t("operator"),
+      idioma: state.language,
+      larguraCm: Number(values.largura),
+      espessuraMm: Number(values.espessura),
+      velocidade: Number(values.velocidade),
+      metrosNumero: Number(result.metros),
+      minutosNumero: Number(result.minutos),
+      criadoEmLocal: new Date().toISOString(),
+      criadoEm: serverTimestamp()
+    });
+    state.firebaseReady = true;
+  } catch (error) {
+    console.warn("Firebase historico indisponivel:", error);
+  }
+}
+
+function setupFirebaseHistory() {
+  try {
+    const historyQuery = query(
+      collection(firestoreDb, "historico_calculos"),
+      orderBy("criadoEm", "desc"),
+      limit(10)
+    );
+
+    onSnapshot(historyQuery, (snapshot) => {
+      state.sharedHistory = snapshot.docs.map((historyDoc) => {
+        const item = historyDoc.data();
+        return {
+          tipo: item.tipo || item.calculadora || "Calculo",
+          operador: item.operador || t("operator"),
+          metros: item.metros || String(item.metrosNumero || 0),
+          tempo: item.tempo || "",
+          hora: item.hora || "",
+          data: item.data || new Date(item.criadoEmLocal || Date.now()).toLocaleString(t("lang"), {
+            day: "2-digit",
+            month: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+          })
+        };
+      });
+      setHistory(state.sharedHistory);
+      state.firebaseReady = true;
+      renderHistory();
+    }, (error) => {
+      console.warn("Firebase leitura indisponivel:", error);
+      state.sharedHistory = null;
+      renderHistory();
+    });
+  } catch (error) {
+    console.warn("Firebase setup indisponivel:", error);
+  }
+}
+
 function saveCurrent(type) {
   const isBobina = type === "Bobina";
   const values = isBobina ? state.bobina : state.agropainel;
@@ -215,8 +329,11 @@ function saveCurrent(type) {
     hora: result.hora,
     data: new Date().toLocaleString(t("lang"), { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
   };
-  setHistory([item, ...getHistory()]);
+  const nextHistory = [item, ...getHistory()].slice(0, 10);
+  if (Array.isArray(state.sharedHistory)) state.sharedHistory = nextHistory;
+  setHistory(nextHistory);
   renderHistory();
+  saveHistoryToFirebase(item, type, values, result);
 }
 
 function showInstallButton(show) {
@@ -299,6 +416,7 @@ function bindEvents() {
     state.operator = name;
     localStorage.setItem(STORAGE.operator, name);
     updateOperator();
+    saveOperatorToFirebase();
   });
 
   $("#operatorName").addEventListener("keydown", (event) => {
@@ -343,6 +461,8 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#operatorName").value = state.operator;
   bindEvents();
   setupInstall();
+  setupFirebaseHistory();
+  saveOperatorToFirebase();
   setupTemperature();
   applyLanguage();
   setInterval(updateClock, 1000);
