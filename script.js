@@ -452,7 +452,7 @@ async function fetchTemperature(latitude, longitude) {
   const data = await response.json();
   const temp = data?.current?.temperature_2m;
   if (typeof temp !== "number") throw new Error("weather");
-  state.temperature = `${Math.round(temp) + 1}°C`;
+  state.temperature = `${Math.round(temp)}°C`;
   updateClock();
 }
 
